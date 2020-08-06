@@ -25,6 +25,7 @@ const processPath = (path, props) => {
 const getDataItems = (path, state, filter = false) => {
   const length = get(state, ["falcorCache", ...path, "length"], 0);
 
+console.log("getDataItems:", state, length);
   const dataItems = [];
   for (let i = 0; i < length; ++i) {
     const p = get(state, ["falcorCache", ...path, "byIndex", i, "value"], null);
@@ -63,6 +64,7 @@ export default (WrappedComponent, options = {}) => {
     }
 
     fetchFalcorDeps() {
+console.log("FETCHING???")
       this.startLoading();
       const { /*app, type,*/ path } = this.props;
       return this.props.falcor.get(
