@@ -133,7 +133,7 @@ class MyEditor extends React.Component {
   focus() {
     setTimeout(() => { this.editor && this.editor.focus(); }, 25);
   }
-  handleChange(editorState) {zz
+  handleChange(editorState) {
     this.props.onChange(editorState);
   }
   handleDroppedFiles(selection, files, { getEditorState }) {
