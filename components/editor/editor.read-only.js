@@ -3,6 +3,7 @@ import React from "react"
 import {
   EditorState,
   convertFromRaw,
+  convertFromHTML,
   CompositeDecorator
 } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
@@ -55,19 +56,21 @@ class ReadOnlyEditor extends React.Component {
   }
   loadFromSavedState(content) {
     const editorState = EditorState.createWithContent(
-      convertFromRaw(content),
+      content ? convertFromRaw(content) : convertFromRaw({blocks:[], entityMap:{}}),
       decorator
     );
     this.setState(state => ({ editorState }));
   }
 
   render() {
+    if(!this.props.value) return <span />
     const { editorState } = this.state;
 
+    
     return (
       <div className="draft-js-editor read-only-editor">
         <Editor placeholder="Type a value..."
-          editorState={ editorState }
+          editorState={ editorState || {} }
           onChange={ editorState => this.setState(state => ({ editorState })) }
           plugins={ plugins }
           readOnly={ true }
