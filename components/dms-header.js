@@ -7,7 +7,7 @@ import { useMessenger } from "../contexts/messenger-context"
 
 import { DmsButton } from "./dms-button"
 
-export default ({ title, showHome = true, dmsActions = [], ...props }) => {
+export default ({ title, shadowed = true, showHome = true, dmsActions = [], ...props }) => {
   const { stack, top, item } = useDms(),
     { pageMessages, attributeMessages } = useMessenger();
 
@@ -29,8 +29,11 @@ export default ({ title, showHome = true, dmsActions = [], ...props }) => {
   const theme = useTheme();
 
   return (
-    <div className={ `fixed top-0 left-0 right-0 z-50 flex items-center px-8 md:ml-${ theme.sidebarW } ${ theme.headerBg } ` }
-      style={ { boxShadow: "0px 6px 3px -3px rgba(0, 0, 0, 0.25)" } }>
+    <div className={ `
+        fixed top-0 left-0 right-0 z-50 flex items-center px-8
+        md:ml-${ theme.sidebarW } ${ theme.headerBg }
+      ` }
+      style={ shadowed ? { boxShadow: "0px 6px 3px -3px rgba(0, 0, 0, 0.25)" } : null }>
       <div className="flex-1 text-4xl font-bold">
         { title || `${ props.app } Manager` }
       </div>

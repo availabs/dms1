@@ -7,9 +7,12 @@ export default ({ active, disabled, children, ...props }) => {
   return (
     <button { ...props } disabled={ disabled } tabIndex={ -1 }
       onMouseDown={ e => e.preventDefault() }
-      className={ `px-1 first:rounded-l last:rounded-r ${ theme.text } focus:border-none focus:outline-none
+      className={ `px-1 first:rounded-l last:rounded-r focus:border-none focus:outline-none
         ${ active ? `${ theme.menuBgActive } ${ theme.menuBgActiveHover }` : theme.menuBg }
-        ${ disabled ? "bg-red-300 cursor-not-allowed" : `${ theme.menuBgHover } cursor-pointer` }
+        ${ active ? `${ theme.menuTextActive } ${ theme.menuTextActiveHover }` : theme.menuText }
+        ${ disabled ? "bg-red-300 cursor-not-allowed" :
+            `${ theme.menuBgHover } ${ theme.menuTextHover } cursor-pointer`
+        }
       ` }>
       { children }
     </button>

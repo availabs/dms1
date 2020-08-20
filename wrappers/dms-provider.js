@@ -99,7 +99,7 @@ export default (Component, options = {}) => {
       return makeInteraction(dmsAction, item, { ...this.props, ...props, interact: this.interact });
     }
 
-    interact(dmsAction, id, props) {
+    interact(dmsAction, id, props, options) {
       if (arguments.length === 1) {
         id = dmsAction;
         dmsAction = "click";
@@ -115,7 +115,7 @@ export default (Component, options = {}) => {
         this.clearStack();
       }
       else if (/^api:/.test(dmsAction)) {
-        return this.props.apiInteract(dmsAction, id, props);
+        return this.props.apiInteract(dmsAction, id, props, options);
       }
       else {
         this.pushAction(dmsAction, id, props);

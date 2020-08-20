@@ -3,7 +3,6 @@ import React from "react"
 import {
   EditorState,
   convertFromRaw,
-  convertFromHTML,
   CompositeDecorator
 } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';

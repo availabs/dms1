@@ -14,12 +14,12 @@ import { useTheme } from "components/avl-components/wrappers/with-theme"
 
 export const useSetSections = format => {
   return useMemo(() => {
-    let section = null;
+    let title = null;
     return format.attributes
       .reduce((a, c) => {
-        if (c.title !== section) {
-          section = c.title;
-          a.push({ title: c.title, attributes: [] });
+        if (c.title !== title) {
+          title = c.title;
+          a.push({ title, attributes: [] });
         }
         a[a.length - 1].attributes.push(c);
         return a;
@@ -27,9 +27,10 @@ export const useSetSections = format => {
   }, [format]);
 }
 
-export const useDmsCreateState = (sections, props) => {
+export const useDmsCreateState = props => {
 
-  const { dmsAction, format, item } = props;
+  const { dmsAction, format, item } = props,
+    sections = useSetSections(format);
 
   const dmsMsg = useMessenger(),
     { attributeMessages } = dmsMsg;
@@ -211,8 +212,7 @@ const LoadModal = ({ action, ...props }) => {
 
 export const dmsCreate = Component => {
   return ({ ...props }) => {
-    const sections = useSetSections(props.format),
-      DmsCreateState = useDmsCreateState(sections, props);
+    const DmsCreateState = useDmsCreateState(props);
 
     useEffect(() => {
       if (DmsCreateState.hasValues && DmsCreateState.verified) {
@@ -276,8 +276,7 @@ export const dmsEdit = Component => {
       setData(get(item, "data", {}));
     }, [item]);
 
-    const sections = useSetSections(props.format),
-      DmsCreateState = useDmsCreateState(sections, props),
+    const DmsCreateState = useDmsCreateState(props),
       updated = hasBeenUpdated(data, DmsCreateState);
 
     useEffect(() => {
