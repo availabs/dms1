@@ -3,6 +3,7 @@ import React from "react"
 import { Button } from "components/avl-components/components/Button"
 import { ValueContainer, ValueItem } from "components/avl-components/components/Inputs/parts"
 import { verifyValue as utilityVerify, hasValue as defaultHasValue } from "components/avl-components/components/Inputs/utils"
+import { useSetRefs } from "components/avl-components/components/utils"
 
 const DefaultDisplay = ({ value }) => {
   switch (typeof value) {
@@ -55,28 +56,14 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
         e.preventDefault();
         addToArray();
       }
-    }, [addToArray, buttonDisabled]),
-
-    setRef = React.useCallback(n => {
-      setNode(n);
-      switch (typeof ref) {
-        case "function":
-          ref(n);
-          break;
-        case "object":
-          ref && ref.current && (ref.current = n);
-          break;
-        default:
-          break;
-      }
-    }, [ref]);
+    }, [addToArray, buttonDisabled]);
 
   return (
     <div className="w-full">
       <div className="flex">
         <Input value={ newItem } onChange={ setNewItem } { ...props } { ...inputProps }
           disabled={ disabled } autoFocus={ autoFocus } onKeyDown={ onKeyDown }
-          placeholder={ `Type a value...`} ref={ setRef }/>
+          placeholder={ `Type a value...`} ref={ useSetRefs(ref, setNode) }/>
         <Button onClick={ addToArray } className="ml-1"
           disabled={ buttonDisabled }>
           add

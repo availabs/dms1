@@ -25,7 +25,6 @@ const processPath = (path, props) => {
 const getDataItems = (path, state, filter = false) => {
   const length = get(state, ["falcorCache", ...path, "length"], 0);
 
-console.log("getDataItems:", state, length);
   const dataItems = [];
   for (let i = 0; i < length; ++i) {
     const p = get(state, ["falcorCache", ...path, "byIndex", i, "value"], null);
@@ -39,6 +38,10 @@ console.log("getDataItems:", state, length);
     }
   }
   return filter ? dataItems.filter(filter) : dataItems;
+}
+
+const DefaultOptions = {
+  loading: true
 }
 
 export default (WrappedComponent, options = {}) => {
@@ -56,33 +59,35 @@ export default (WrappedComponent, options = {}) => {
       this.MOUNTED && super.setState(...args);
     }
 
-    startLoading() {
-      this.setState(state => ({ loading: ++state.loading }));
+    startLoading(bool = true) {
+      this.setState(({ loading }) => ({ loading: bool ? ++loading : loading }));
     }
-    stopLoading() {
-      this.setState(state => ({ loading: --state.loading }));
+    stopLoading(bool = true) {
+      this.setState(({ loading }) => ({ loading: bool ? --loading : loading }));
     }
 
-    fetchFalcorDeps() {
-console.log("FETCHING???")
-      this.startLoading();
-      const { /*app, type,*/ path } = this.props;
-      return this.props.falcor.get(
-        // ["dms", "format", `${ app }+${ type }`, ["app", "type", "attributes"]],
-        [...path, "length"]
-      ).then(res => {
-        let length = get(res, ["json", ...path, "length"], 0);
-        if (length) {
-          return this.props.falcor.chunk(
-            [...path, "byIndex", { from: 0, to: --length },
-              ["id", "app", "type", "data", "updated_at"]
-            ]
-          )
-        }
-      }).then(() => this.stopLoading())
+    fetchFalcorDeps(loading = true) {
+      this.startLoading(loading);
+      const { path } = this.props;
+      return this.props.falcor.get([...path, "length"])
+        .then(res => {
+          let length = get(res, ["json", ...path, "length"], 0);
+          if (length) {
+            return this.props.falcor.get(
+              [...path, "byIndex", { from: 0, to: length - 1 },
+                ["id", "app", "type", "data", "updated_at"]
+              ]
+            )
+          }
+        }).then(() => this.stopLoading(loading))
     }
-    apiInteract(action, id, data) {
+    apiInteract(action, id, data, options = {}) {
       let falcorAction = false;
+
+      options = {
+        ...DefaultOptions,
+        ...options
+      }
 
       switch (action) {
         case "api:edit":
@@ -99,9 +104,10 @@ console.log("FETCHING???")
       }
 
       if (falcorAction) {
-        this.startLoading();
+        this.startLoading(options.loading);
         return Promise.resolve(falcorAction.call(this, action, id, data))
-          .then(() => this.stopLoading());
+          .then(() => this.fetchFalcorDeps(options.loading))
+          .then(() => this.stopLoading(options.loading));
       }
       return Promise.resolve();
     }
@@ -127,7 +133,7 @@ console.log("FETCHING???")
     }
     render() {
       return (
-        <WrappedComponent { ...this.props } { ...this.state }
+        <WrappedComponent { ...this.props } loading={ Boolean(this.state.loading) }
           apiInteract={ (...args) => this.apiInteract(...args) }/>
       )
     }
