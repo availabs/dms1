@@ -108,7 +108,7 @@ console.log("FETCHING???")
     falcorEdit(action, id, data) {
       if (!(id && data)) return;
 
-      return this.props.falcor.call(["dms", "data", "update"], [id, data]);
+      return this.props.falcor.call(["dms", "data", "edit"], [id, data]);
     }
     falcorCreate(action, id, data) {
       const args = [this.props.app, this.props.type, data].filter(Boolean);
