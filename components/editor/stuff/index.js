@@ -1,7 +1,7 @@
 import React from "react"
 import { EditorState, DefaultDraftBlockRenderMap, getDefaultKeyBinding } from "draft-js"
 
-import Immutable from "draft-js/node_modules/immutable"
+import Immutable from "immutable"
 
 const customStyleMap = {
   'STRIKETHROUGH': {

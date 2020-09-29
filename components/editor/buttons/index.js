@@ -1,6 +1,6 @@
 //import React from "react"
 
-import Immutable from "draft-js/node_modules/immutable"
+import Immutable from "immutable"
 
 import makeBlockDataButton from "./makeBlockDataButton"
 import makeDataRangeButton from "./makeDataRangeButton"
