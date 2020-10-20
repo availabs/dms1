@@ -35,8 +35,7 @@ const myBlockRenderMap = Immutable.Map({
 const blockRenderMap = DefaultDraftBlockRenderMap.merge(myBlockRenderMap);
 
 const hasListSelected = editorState =>
-  editorState
-    .getCurrentContent()
+  editorState.getCurrentContent()
     .getBlockForKey(editorState.getSelection().getStartKey())
     .getType().includes("ordered-list-item");
 
