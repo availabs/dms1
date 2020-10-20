@@ -1,7 +1,7 @@
 import React from "react"
 import { EditorState, DefaultDraftBlockRenderMap, getDefaultKeyBinding } from "draft-js"
 
-import Immutable from "draft-js/node_modules/immutable"
+import Immutable from "immutable"
 
 const customStyleMap = {
   'STRIKETHROUGH': {
@@ -35,8 +35,7 @@ const myBlockRenderMap = Immutable.Map({
 const blockRenderMap = DefaultDraftBlockRenderMap.merge(myBlockRenderMap);
 
 const hasListSelected = editorState =>
-  editorState
-    .getCurrentContent()
+  editorState.getCurrentContent()
     .getBlockForKey(editorState.getSelection().getStartKey())
     .getType().includes("ordered-list-item");
 
