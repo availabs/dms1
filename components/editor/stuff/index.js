@@ -10,12 +10,40 @@ const customStyleMap = {
 };
 
 const blockStyleFn = block => {
-  switch (block.getType()) {
+  const textAlign = block.getData().get("textAlign"),
+    textIndent = block.getData().get("textIndent");
+
+  const styles = [
+    textIndent ? `indent-${ textIndent }` : "",
+    textAlign || ""
+  ]
+
+  const type = block.getType();
+  switch (type) {
+    case "header-one":
+      styles.push("text-3xl font-extrabold");
+      break;
+    case "header-two":
+      styles.push("text-2xl font-bold");
+      break;
+    case "header-three":
+      styles.push("text-xl font-semibold");
+      break;
+    case "header-four":
+      styles.push("text-base font-medium");
+      break;
+    case "header-five":
+      styles.push("text-sm font-medium");
+      break;
+    case "header-six":
+      styles.push("text-xs font-medium");
+      break;
     case "blockquote":
-      return "rounded bg-gray-200 py-2 px-3 m-2"
+      styles.push("rounded bg-gray-200 py-2 px-3 m-2");
     default:
-      return null;
+      break;
   }
+  return styles.filter(Boolean).join(" ");
 }
 
 const myBlockRenderMap = Immutable.Map({

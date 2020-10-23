@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Input, TextArea, Select, ObjectInput, BooleanInput } from "components/avl-components/components/Inputs"
+import { Input, TextArea, Select, ObjectInput, BooleanInput, MarkdownInput } from "components/avl-components/components/Inputs"
 import Editor, { createEmpty } from "../../components/editor"
 import ReadOnlyEditor from "../../components/editor/editor.read-only"
 import ImgInput from "../../components/img-input"
@@ -96,6 +96,9 @@ export const getInput = (att, props, disabled) => {
   let InputComp = null, inputProps = {}, DisplayComp, getEmptyValue;
 
   switch (type) {
+    case "markdown":
+      InputComp = MarkdownInput;
+      break;
     case "textarea":
       InputComp = TextArea;
       break;

@@ -37,8 +37,8 @@ const ParseItems = ({ Component, ...props}) => {
 export default (Component, options = {}) => {
   return ({ ...props }) => {
     const { path } = useRouteMatch(),
-      alt11 = `${ path }/:action/`,
-      alt13 = `${ path }/:action/:id/`,
+      alt11 = `${ path }/:action`,
+      alt13 = `${ path }/:action/:id`,
       alt21 = `${ path }/:action/:attribute/:value`,
       routerProps = {
         basePath: path,
