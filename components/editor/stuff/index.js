@@ -40,6 +40,7 @@ const blockStyleFn = block => {
       break;
     case "blockquote":
       styles.push("rounded bg-gray-200 py-2 px-3 m-2");
+      break;
     default:
       break;
   }
