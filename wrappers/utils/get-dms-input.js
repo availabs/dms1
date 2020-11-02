@@ -131,22 +131,25 @@ export const getInput = (att, props, disabled) => {
   if (isArray) {
     type === 'dms-input' ?  
       React.forwardRef((props, ref) => (
-        <OrderedArrayInput Input={ InputComp } id={ att.id }
-          { ...props } inputProps={ inputProps }
+        <OrderedArrayInput  
+          { ...props } 
+          id={ att.id }
+          inputProps={ inputProps }
           verifyValue={ att.verifyValue }
           hasValue={ att.checkHasValue }
           DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
-          Input = {props.EditComp || props.Input}
+          Input = {props.EditComp || props.Input} //Input={ InputComp }
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }/>
         )) :
       React.forwardRef((props, ref) => (
-        <ArrayInput Input={ InputComp } id={ att.id }
-          { ...props } inputProps={ inputProps }
+        <ArrayInput 
+          { ...props }
+          id={ att.id }
           verifyValue={ att.verifyValue }
           hasValue={ att.checkHasValue }
           DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
-          Input = {props.EditComp || props.Input}
+          Input = {props.EditComp || props.Input} // inputProps={ inputProps }
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }/>
       ))
