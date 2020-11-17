@@ -14,6 +14,7 @@ import ReadOnlyEditor from "../../components/editor/editor.read-only"
 import ImgInput from "../../components/img-input"
 import DmsInput from "../../components/dms-input"
 import ArrayInput from "../../components/array-input"
+import OrderedArrayInput from "../../components/ordered-array-input"
 
 import { getValue } from "../../utils"
 
@@ -138,16 +139,31 @@ export const getInput = (att, props, disabled) => {
       break;
   }
   if (isArray) {
-    return React.forwardRef((props, ref) => (
-      <ArrayInput Input={ InputComp } id={ att.id }
-        { ...props } inputProps={ inputProps }
-        verifyValue={ att.verifyValue }
-        hasValue={ att.checkHasValue }
-        DisplayComp={ DisplayComp } ref={ ref }
-        getEmptyValue={ getEmptyValue }
-        disabled={ disabled || (att.editable === false) }/>
-    ))
-  }
+    type === 'dms-input' ?  
+      React.forwardRef((props, ref) => (
+        <OrderedArrayInput  
+          { ...props } 
+          id={ att.id }
+          inputProps={ inputProps }
+          verifyValue={ att.verifyValue }
+          hasValue={ att.checkHasValue }
+          DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
+          Input = {props.EditComp || props.Input} //Input={ InputComp }
+          getEmptyValue={ getEmptyValue }
+          disabled={ disabled || (att.editable === false) }/>
+        )) :
+      React.forwardRef((props, ref) => (
+        <ArrayInput 
+          { ...props }
+          id={ att.id }
+          verifyValue={ att.verifyValue }
+          hasValue={ att.checkHasValue }
+          DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
+          Input = {props.EditComp || props.Input} // inputProps={ inputProps }
+          getEmptyValue={ getEmptyValue }
+          disabled={ disabled || (att.editable === false) }/>
+      ))
+    }
   return React.forwardRef((props, ref) => (
     <InputComp id={ att.id } { ...inputProps } { ...props } ref={ ref }
       disabled={ disabled || (att.editable === false) }/>
