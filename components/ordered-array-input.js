@@ -23,25 +23,38 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
 
   value = value || [];
 
-  const [node, setNode] = React.useState(null),
+  const [node] = React.useState(null),
     [newItem, setNewItem] = React.useState(getEmptyValue),
+    [editIndex, setEditIndex] = React.useState(null),
+    [addItem, setAddItem] = React.useState(false),
 
     addToArray = React.useCallback(e => {
-      const newValue = [...value, newItem];
+      console.log('addToArray', editIndex)
+      const newValue = editIndex === null ?
+        [...value, newItem] :
+        Object.assign([], value, {[editIndex]: newItem});
+
       onChange(newValue);
       setNewItem(getEmptyValue());
+      setEditIndex(null)
+      setAddItem(false)
       node && node.focus();
-    }, [value, newItem, node, onChange, getEmptyValue]),
+    }, [value, newItem, node, onChange, getEmptyValue, editIndex]),
 
     removeFromArray = React.useCallback(v => {
       onChange(value.filter(vv => vv !== v));
     }, [value, onChange]),
 
-    editItem = React.useCallback(v => {
+    addNewItem = React.useCallback(e => {
+      setAddItem(!addItem)
+      setNewItem(getEmptyValue())
+    }, [addItem,getEmptyValue]),
+
+    editItem = React.useCallback((v,i) => {
+      setEditIndex(i);
       setNewItem(v);
-      removeFromArray(v);
       node && node.focus();
-    }, [node, removeFromArray]),
+    }, [node]),
 
     buttonDisabled = React.useMemo(() =>
       disabled ||
@@ -59,30 +72,68 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       }
     }, [addToArray, buttonDisabled]);
 
+  // console.log('Input', Input)
   return (
     <div className="w-full">
-      <div className="flex">
-        <Input value={ newItem } onChange={ setNewItem } { ...props } { ...inputProps }
-          disabled={ disabled } autoFocus={ autoFocus } onKeyDown={ onKeyDown }
-          placeholder={ `Type a value...`} ref={ useSetRefs(ref, setNode) }/>
-        <Button onClick={ addToArray } className="ml-1"
-          disabled={ buttonDisabled }>
-          add
-        </Button>
-      </div>
-      { !value.length ? null :
-        <div className="mt-1 ml-10">
-          <ValueContainer>
-            { value.map((v, i) => (
-                <ValueItem key={ i } edit={ e => editItem(v) }
-                  remove={ e => removeFromArray(v) }>
-                  { <DisplayComp value={ v }/> }
-                </ValueItem>
-              ))
-            }
-          </ValueContainer>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-12">
+        <div>
+          <Button onClick={addNewItem} >
+            {addItem ? 'Cancel' : 'Add Section'}
+          </Button>
         </div>
-      }
+        {addItem ?
+          <div>
+            <Input
+              { ...props }
+              { ...inputProps }
+              value={ newItem }
+              onChange={ setNewItem }
+              autoFocus={ autoFocus }
+              onKeyDown={ onKeyDown }
+              addToArray={ addToArray }
+              disabled ={ buttonDisabled }
+              placeholder={ `Type a value...`}
+            />
+            {Input.hasSave ? '' :
+              <Button onClick={ addToArray } disabled={ buttonDisabled }>
+                Save
+              </Button>
+            }
+          </div> : ''}
+        </div>
+        { !value.length ? null :
+          value.map((v, i) => {
+            return editIndex === i ?
+              <div>
+                <Input
+                  { ...props }
+                  { ...inputProps }
+                  value={ newItem }
+                  onChange={ setNewItem }
+                  autoFocus={ autoFocus }
+                  onKeyDown={ onKeyDown }
+                  addToArray={ addToArray }
+                  disabled ={ buttonDisabled }
+                  placeholder={ `Type a value...`}
+                />
+                {Input.hasSave ? '' :
+                  <Button onClick={ addToArray } disabled={ buttonDisabled }>
+                    Save
+                  </Button>
+                }
+              </div> :
+              <div className='w-full'>
+                {/* <ValueItem key={ i } edit={ e => editItem(v,i) }
+                  remove={ e => removeFromArray(v) }> */}
+                  { <DisplayComp
+                      value={ v }
+                      edit={ e => editItem(v,i) }
+                      remove={ e => removeFromArray(v) }
+                    /> }
+                {/*</ValueItem>*/}
+              </div>
+          })
+        }
     </div>
   )
 })
