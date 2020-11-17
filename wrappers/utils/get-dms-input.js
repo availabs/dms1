@@ -1,6 +1,14 @@
 import React from "react"
 
-import { Input, TextArea, Select, ObjectInput, BooleanInput, MarkdownInput } from "components/avl-components/components/Inputs"
+import {
+  Input,
+  TextArea,
+  Select,
+  ObjectInput,
+  BooleanInput,
+  MarkdownInput
+} from "@availabs/avl-components"
+
 import Editor, { createEmpty } from "../../components/editor"
 import ReadOnlyEditor from "../../components/editor/editor.read-only"
 import ImgInput from "../../components/img-input"
@@ -104,11 +112,13 @@ export const getInput = (att, props, disabled) => {
       break;
     case "img":
       InputComp = ImgInput;
+      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
       break;
     case "richtext":
       InputComp = Editor;
       DisplayComp = EditorDisplayComp;
       getEmptyValue = createEmpty;
+      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
       break;
     case "object":
       InputComp = ObjectInput;

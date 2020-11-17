@@ -1,8 +1,6 @@
 import React from "react"
 
-import { Button } from "components/avl-components/components/Button"
-
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { Button, useTheme } from "@availabs/avl-components"
 
 import styled from "styled-components"
 
@@ -12,7 +10,7 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
     <div className="w-full">
       { sections.length < 2 ? null :
         <>
-          <StyledBorderDiv className={ `text-2xl mb-2 ${ theme.borderInfo }` }
+          <StyledBorderDiv className="text-2xl mb-2"
             width={ ((activeIndex + 1) / sections.length) * 100 }>
             <div className="flex">
               { sections.map((sect, i) =>

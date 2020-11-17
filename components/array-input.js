@@ -1,9 +1,10 @@
 import React from "react"
 
-import { Button } from "components/avl-components/components/Button"
-import { ValueContainer, ValueItem } from "components/avl-components/components/Inputs/parts"
-import { verifyValue as utilityVerify, hasValue as defaultHasValue } from "components/avl-components/components/Inputs/utils"
-import { useSetRefs } from "components/avl-components/components/utils"
+import {
+  Button, ValueContainer, ValueItem,
+  verifyValue as utilityVerify, hasValue as defaultHasValue,
+  useSetRefs
+} from "@availabs/avl-components"
 
 const DefaultDisplay = ({ value }) => {
   switch (typeof value) {

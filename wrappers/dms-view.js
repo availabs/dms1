@@ -3,6 +3,8 @@ import React from "react"
 import { DmsButton } from "../components/dms-button"
 import ReadOnlyEditor from "../components/editor/editor.read-only"
 
+import { MarkdownViewer } from "@availabs/avl-components"
+
 import get from "lodash.get"
 import styled from "styled-components"
 
@@ -21,6 +23,8 @@ const ViewItem = ({ value, type }) =>
     </div>
   : type === "richtext" ?
     <ReadOnlyEditor value={ value }/>
+  : type === "markdown" ?
+    <MarkdownViewer markdown={ value }/>
   : <div>{ value }</div>
 
 const ViewRow = ({ name, children }) =>

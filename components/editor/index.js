@@ -1,8 +1,6 @@
 import React from "react"
 
-import { useTheme } from "components/avl-components/wrappers/with-theme"
-import imgLoader from "components/avl-components/wrappers/img-loader"
-import showLoading from "components/avl-components/wrappers/show-loading"
+import { useTheme, imgLoader, showLoading } from "@availabs/avl-components"
 
 import {
   EditorState,
@@ -22,6 +20,8 @@ import makeLinkItPlugin from "./linkify-it"
 import makeSuperSubScriptPlugin from "./super-sub-script"
 import makePositionablePlugin from "./positionable"
 import makeStuffPlugin from "./stuff"
+
+console.log("?????", useTheme, imgLoader, showLoading)
 
 const buttonPlugin = makeButtonPlugin(),
   { BlockQuoteButton,

@@ -4,7 +4,7 @@ import {  ButtonContext } from "../contexts"
 
 import { useMakeInteraction } from "../wrappers/dms-provider"
 
-import { Button, LinkButton } from "components/avl-components/components/Button"
+import { Button, LinkButton } from "@availabs/avl-components"
 
 import get from "lodash.get"
 

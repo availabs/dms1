@@ -1,14 +1,15 @@
 import React from "react"
 
-import { Button } from "components/avl-components/components/Button"
+import {
+  Button,
+  useTheme,
+  imgLoader,
+  showLoading,
+  useBrush
+} from "@availabs/avl-components"
 
 import get from "lodash.get"
 import styled from "styled-components"
-
-import { useTheme } from "components/avl-components/wrappers/with-theme"
-import imgLoader from "components/avl-components/wrappers/img-loader"
-import showLoading from "components/avl-components/wrappers/show-loading"
-import { useBrush } from "components/avl-components/components/utils"
 
 const ImgInput = ({ height = 500, autoFocus = false, value: propsValue, onChange, ...props }) => {
   const [draggingOver, setDragging] = React.useState(false);

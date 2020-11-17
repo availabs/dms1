@@ -1,7 +1,6 @@
 import React from "react"
 
-import HeaderComponent from "components/avl-components/components/Header/HeaderComponent"
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { useTheme, HeaderComponent } from "@availabs/avl-components"
 import { useDms } from "../contexts/dms-context"
 import { useMessenger } from "../contexts/messenger-context"
 
