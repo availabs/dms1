@@ -21,8 +21,6 @@ import makeSuperSubScriptPlugin from "./super-sub-script"
 import makePositionablePlugin from "./positionable"
 import makeStuffPlugin from "./stuff"
 
-console.log("?????", useTheme, imgLoader, showLoading)
-
 const buttonPlugin = makeButtonPlugin(),
   { BlockQuoteButton,
     CodeBlockButton,
