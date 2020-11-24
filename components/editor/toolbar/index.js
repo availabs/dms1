@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { useTheme } from "@availabs/avl-components"
 
 const Separator = ({ ...props }) =>
   <div className="border-r border-l mx-2 border-current" style={ { borderColor: "currentColor" } }/>

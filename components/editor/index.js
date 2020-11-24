@@ -1,8 +1,6 @@
 import React from "react"
 
-import { useTheme } from "components/avl-components/wrappers/with-theme"
-import imgLoader from "components/avl-components/wrappers/img-loader"
-import showLoading from "components/avl-components/wrappers/show-loading"
+import { useTheme, imgLoader, showLoading } from "@availabs/avl-components"
 
 import {
   EditorState,
@@ -22,6 +20,14 @@ import makeLinkItPlugin from "./linkify-it"
 import makeSuperSubScriptPlugin from "./super-sub-script"
 import makePositionablePlugin from "./positionable"
 import makeStuffPlugin from "./stuff"
+
+// import createResizeablePlugin from 'draft-js-resizeable-plugin'
+// import createFocusPlugin from 'draft-js-focus-plugin';
+
+// const resizeablePlugin = createResizeablePlugin();
+// const focusPlugin = createFocusPlugin();
+
+// console.log("?????", useTheme, imgLoader, showLoading)
 
 const buttonPlugin = makeButtonPlugin(),
   { BlockQuoteButton,
@@ -60,6 +66,7 @@ const linkItPlugin = makeLinkItPlugin();
 const plugins = [
   buttonPlugin,
   toolbarPlugin,
+  //resizeablePlugin,
   imagePlugin,
   linkItPlugin,
   makeSuperSubScriptPlugin(),
@@ -232,7 +239,7 @@ export default imgLoader(showLoading(MyEditor, LoadingOptions));
 const EditorWrapper = ({ children, hasFocus, id, ...props }) => {
   const theme = useTheme();
   return (
-    <div className={ `pt-15 relative rounded draft-js-editor ${ theme.inputBg } w-full
+    <div className={ `pt-16 relative rounded draft-js-editor ${ theme.inputBg } w-full
       ${ hasFocus ? theme.inputBorderFocus : theme.inputBorder }
     ` } { ...props }>
       { children }

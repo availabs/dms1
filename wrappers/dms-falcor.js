@@ -1,8 +1,7 @@
 import React from "react"
 
 import { connect } from "react-redux"
-// import { reduxFalcor } from "utils/redux-falcor"
-import { reduxFalcor } from "utils/redux-falcor-new"
+import { reduxFalcor } from "@availabs/avl-components"
 
 import get from "lodash.get"
 

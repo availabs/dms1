@@ -1,6 +1,14 @@
 import React from "react"
 
-import { Input, TextArea, Select, ObjectInput, BooleanInput, MarkdownInput } from "components/avl-components/components/Inputs"
+import {
+  Input,
+  TextArea,
+  Select,
+  ObjectInput,
+  BooleanInput,
+  MarkdownInput
+} from "@availabs/avl-components"
+
 import Editor, { createEmpty } from "../../components/editor"
 import ReadOnlyEditor from "../../components/editor/editor.read-only"
 import ImgInput from "../../components/img-input"
@@ -104,11 +112,13 @@ export const getInput = (att, props, disabled) => {
       break;
     case "img":
       InputComp = ImgInput;
+      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
       break;
     case "richtext":
       InputComp = Editor;
       DisplayComp = EditorDisplayComp;
       getEmptyValue = createEmpty;
+      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
       break;
     case "object":
       InputComp = ObjectInput;
@@ -130,9 +140,9 @@ export const getInput = (att, props, disabled) => {
   if (isArray) {
     return React.forwardRef((props, ref) => (
       type === 'dms-format' ?
-        <OrderedArrayInput 
+        <OrderedArrayInput
           { ...props }
-          Input={ props.EditComp || InputComp } 
+          Input={ props.EditComp || InputComp }
           id={ att.id }
           inputProps={ inputProps }
           verifyValue={ att.verifyValue }
@@ -140,10 +150,10 @@ export const getInput = (att, props, disabled) => {
           DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }
-        /> : 
-        <ArrayInput 
+        /> :
+        <ArrayInput
           { ...props }
-          Input={ props.EditComp || InputComp } 
+          Input={ props.EditComp || InputComp }
           id={ att.id }
           inputProps={ inputProps }
           verifyValue={ att.verifyValue }
@@ -152,9 +162,7 @@ export const getInput = (att, props, disabled) => {
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }
         />
-
     ))  
-
   }
   return React.forwardRef((props, ref) => (
     <InputComp id={ att.id } { ...inputProps } { ...props } ref={ ref }

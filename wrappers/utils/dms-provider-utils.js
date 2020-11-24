@@ -136,14 +136,14 @@ export const makeInteraction = (...args) => {
             e.stopPropagation();
             return Promise.resolve(interact(action, itemId, propsToSeed))
               .then(() => doThen())
-              .then(() => push({
+              /*.then(() => push({
                 pathname: get(stack, [stackLength - 1], basePath),
                 search: get(searchStack, [searchLength - 1], ""),
                 state: {
                   stack: stack.slice(0, -1),
                   search: searchStack.slice(0, -1)
                 }
-              }))
+              }))*/
           }
         }
       : { type: "link",

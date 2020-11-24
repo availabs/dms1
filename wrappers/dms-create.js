@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react"
 
-import AvlModal from "components/avl-components/components/Modal/avl-modal"
-
 import deepequal from "deep-equal"
 import get from "lodash.get"
 import throttle from "lodash.throttle"
 
-import { hasValue } from "components/avl-components/components/Inputs/utils"
+import { hasValue, useTheme, AvlModal } from "@availabs/avl-components"
 import { DmsCreateStateClass, makeNewAttribute } from "./utils/dms-create-utils"
 
 import { useMessenger } from "../contexts/messenger-context"
-import { useTheme } from "components/avl-components/wrappers/with-theme"
 
 export const useSetSections = format => {
   return useMemo(() => {
@@ -173,10 +170,10 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   const { saveValues } = DmsCreateState;
 
-  const saveToLocalStorage = useCallback(throttle((storageId, DmsCreateState) => {
+  const saveToLocalStorage = useMemo(throttle((storageId, DmsCreateState) => {
     const { saveValues } = DmsCreateState;
     window.localStorage.setItem(storageId, JSON.stringify(saveValues));
-  }, 500), []);
+  }, 500), [saveValues]);
 
   useEffect(() => {
     if (!ready || !checked) return;

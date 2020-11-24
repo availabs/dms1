@@ -3,8 +3,9 @@ import React from "react"
 import { DmsButton } from "../components/dms-button"
 import ReadOnlyEditor from "../components/editor/editor.read-only"
 
+import { MarkdownViewer } from "@availabs/avl-components"
+
 import get from "lodash.get"
-import styled from "styled-components"
 
 import { prettyKey, getValue } from "../utils"
 
@@ -21,6 +22,8 @@ const ViewItem = ({ value, type }) =>
     </div>
   : type === "richtext" ?
     <ReadOnlyEditor value={ value }/>
+  : type === "markdown" ?
+    <MarkdownViewer markdown={ value }/>
   : <div>{ value }</div>
 
 const ViewRow = ({ name, children }) =>
@@ -31,7 +34,7 @@ const ViewRow = ({ name, children }) =>
     </div>
   </div>
 
-export default (Component, options = {}) => {
+const View = (Component, options = {}) => {
   return class Wrapper extends React.Component {
     static defaultProps = {
       dmsAction: "view",
@@ -94,9 +97,9 @@ export default (Component, options = {}) => {
         )
       }
       return (
-        <BtnGroup key={ key }>
+        <div key={ key }>
           { actions.map((a, i) => this.getActionGroups(a, i)) }
-        </BtnGroup>
+        </div>
       )
     }
     render() {
@@ -132,9 +135,9 @@ export default (Component, options = {}) => {
         <div>
           <Component { ...props } { ...this.props }/>
           { !actions.length ? null :
-            <ActionContainer>
+            <div>
               { this.getActionGroups(actions) }
-            </ActionContainer>
+            </div>
           }
           <div>{ this.renderChildren() }</div>
         </div>
@@ -143,27 +146,5 @@ export default (Component, options = {}) => {
     }
   }
 }
-const BtnGroup = styled.div`
-  display: block;
-  > * {
-    margin-right: 0.25rem;
-  }
-  > *:last-child {
-    margin-right: 0rem;
-  }
-`
-const ActionContainer = styled.div`
-  margin: 0.75rem 0;
-  ${ BtnGroup } {
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  ${ BtnGroup }:last-child {
-    display: block;
-    margin-bottom: 0rem;
-  }
-  ${ BtnGroup }:only-child {
-    display: block;
-    margin-bottom: 0rem;
-  }
-`
+
+export default View
