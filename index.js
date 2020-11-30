@@ -4,7 +4,7 @@ import DmsComponents from "./components"
 
 import { DmsButton } from "./components/dms-button"
 
-import { Header } from 'components/avl-components/components'
+import { Header } from "@availabs/avl-components"
 
 import dmsManager from "./wrappers/dms-manager"
 

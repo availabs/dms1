@@ -44,40 +44,6 @@ export default () => {
       store.blockMap = getBlockMap(editorState);
       return editorState;
     },
-    blockStyleFn: block => {
-      const textAlign = block.getData().get("textAlign"),
-        textIndent = block.getData().get("textIndent");
-
-      const styles = [
-        textIndent ? `indent-${ textIndent }` : "",
-        textAlign || ""
-      ]
-
-      const type = block.getType();
-      switch (type) {
-        case "header-one":
-          styles.push("text-3xl font-extrabold");
-          break;
-        case "header-two":
-          styles.push("text-2xl font-bold");
-          break;
-        case "header-three":
-          styles.push("text-xl font-semibold");
-          break;
-        case "header-four":
-          styles.push("text-base font-medium");
-          break;
-        case "header-five":
-          styles.push("text-sm font-medium");
-          break;
-        case "header-six":
-          styles.push("text-xs font-medium");
-          break;
-        default:
-          break;
-      }
-      return styles.filter(Boolean).join(" ");
-    },
     BlockQuoteButton: makeBlockStyleButton("blockquote", store),
     CodeBlockButton: makeBlockStyleButton("code-block", store),
     HeaderOneButton: makeBlockStyleButton("header-one", store),

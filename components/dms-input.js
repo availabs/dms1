@@ -2,7 +2,7 @@ import React from "react"
 
 import { useDms } from "../contexts/dms-context"
 import { useAuth } from "../contexts/auth-context"
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { useTheme } from "@availabs/avl-components"
 
 import { useSetSections } from "../wrappers/dms-create"
 
@@ -46,7 +46,7 @@ export default React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, on
             { section.attributes.map(({ Input, key, ...att }, i) =>
                 <div key={ key } className={ `border-l-4 pl-2 pb-2 mb-2 last:mb-0
                   ${ !att.verifyValue(value[key]) ? theme.borderDanger : att.required ? theme.borderSuccess :
-                    att.checkHasValue(value[key]) ? theme.borderInfo : "border-current" }
+                    att.checkHasValue(value[key]) ? theme.borderInfo : theme.borderLight }
                 ` }>
                   <label htmlFor={ att.id }>{ att.name }</label>
                   <Input { ...props } onChange={ att.onChange } value={ value[key] }

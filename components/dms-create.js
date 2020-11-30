@@ -1,9 +1,6 @@
 import React from "react"
 
-import { Button } from "components/avl-components/components/Button"
-import Select from "components/avl-components/components/Inputs/select"
-// import { hasValue } from "components/avl-components/components/Inputs/utils"
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { Button, Select, useTheme } from "@availabs/avl-components"
 
 import { DmsButton } from "./dms-button"
 
@@ -70,7 +67,7 @@ export const DmsCreateBase = ({ createState, ...props }) => {
                     className={ `border-l-4 pl-2 mb-2 pb-2
                       ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-2xl"}
                       ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
-                          att.hasValue ? theme.borderInfo : "border-current" }
+                          att.hasValue ? theme.borderInfo : theme.borderLight }
                       ${ att.hidden ? 'hidden' : '' }
                     ` }>
                     <label htmlFor={ att.id }>{ att.name }</label>

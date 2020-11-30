@@ -45,7 +45,8 @@ const newMsgId = () => `dms-msg-${ ++UNIQUE_ID }`;
 export default (Component, options = {}) => {
   const {
     authRules = {},
-    buttonThemes = {}
+    buttonThemes = {},
+    imgUploadUrl
   } = options;
 
   class Wrapper extends React.Component {
@@ -207,7 +208,8 @@ export default (Component, options = {}) => {
         item,
         type,
         app,
-        top
+        top,
+        imgUploadUrl
       }
     }
     render() {

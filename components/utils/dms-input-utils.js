@@ -1,6 +1,6 @@
 import React from "react"
 
-import { hasValue, verifyValue } from "components/avl-components/components/Inputs/utils"
+import { hasValue, verifyValue } from "@availabs/avl-components"
 
 import { isRequired, getAttributes } from "../../wrappers/utils/dms-create-utils"
 

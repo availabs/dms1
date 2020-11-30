@@ -2,7 +2,7 @@ import React from "react"
 
 import { DmsButton } from "./dms-button"
 
-import { Table } from 'components/avl-components/components'
+import { Table } from "@availabs/avl-components"
 
 import get from "lodash.get"
 

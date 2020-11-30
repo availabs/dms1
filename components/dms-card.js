@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme } from "components/avl-components/wrappers/with-theme"
+import { useTheme } from "@availabs/avl-components"
 
 export default ({ title, body, footer, children }) => {
   const theme = useTheme();
