@@ -170,10 +170,10 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   const { saveValues } = DmsCreateState;
 
-  const saveToLocalStorage = useMemo(throttle((storageId, DmsCreateState) => {
+  const saveToLocalStorage = useMemo(() => throttle((storageId, DmsCreateState) => {
     const { saveValues } = DmsCreateState;
     window.localStorage.setItem(storageId, JSON.stringify(saveValues));
-  }, 500), [saveValues]);
+  }, 500), []);
 
   useEffect(() => {
     if (!ready || !checked) return;
