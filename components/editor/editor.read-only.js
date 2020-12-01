@@ -53,6 +53,16 @@ class ReadOnlyEditor extends React.Component {
       this.setState(state => ({ editorState: this.props.value }));
     }
   }
+
+  static getDerivedStateFromProps(props, prevState){
+    if (props.isRaw) {
+      // this.loadFromSavedState(this.props.value);
+    }
+    else {
+      return { editorState: props.value };
+    }
+  }
+
   loadFromSavedState(content) {
     const editorState = EditorState.createWithContent(
       content ? convertFromRaw(content) : convertFromRaw({blocks:[], entityMap:{}}),

@@ -1,5 +1,6 @@
 .draft-js-editor .public-DraftEditor-content {
   min-height: 12rem;
+  /*line-height: 1.75rem*/
 }
 .draft-js-editor.read-only-editor .public-DraftEditor-content {
   min-height: auto;

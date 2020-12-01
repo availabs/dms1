@@ -2,7 +2,7 @@ import React from "react"
 
 import { Button, useTheme } from "@availabs/avl-components"
 
-import styled from "styled-components"
+//import styled from "styled-components"
 
 export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, children, ...props }) => {
   const theme = useTheme();
@@ -10,7 +10,7 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
     <div className="w-full">
       { sections.length < 2 ? null :
         <>
-          <StyledBorderDiv className="text-2xl mb-2"
+          <div className="text-2xl mb-2 wizard"
             width={ ((activeIndex + 1) / sections.length) * 100 }>
             <div className="flex">
               { sections.map((sect, i) =>
@@ -27,7 +27,7 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
                 )
               }
             </div>
-          </StyledBorderDiv>
+          </div>
           <div className="flex">
             { sections.length < 2 ? null :
               <Button className="flex-0" disabled={ !canGoPrev }
@@ -53,14 +53,4 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
   )
 }
 
-const StyledBorderDiv = styled.div`
-  &::after {
-    content: "";
-    display: block;
-    width: ${ props => props.width }%;
-    border-bottom: 4px;
-    border-style: solid;
-    border-color: inherit;
-    transition: 0.25s;
-  }
-`
+

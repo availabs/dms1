@@ -1,9 +1,9 @@
 import React from "react"
 
 import {
-  Button, ValueContainer, ValueItem,
-  verifyValue as utilityVerify, hasValue as defaultHasValue,
-  useSetRefs
+  Button, 
+  //ValueContainer, ValueItem, useSetRefs,
+  verifyValue as utilityVerify, hasValue as defaultHasValue
 } from "@availabs/avl-components"
 
 const DefaultDisplay = ({ value }) => {
@@ -29,7 +29,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
     [addItem, setAddItem] = React.useState(false),
 
     addToArray = React.useCallback(e => {
-      console.log('addToArray', editIndex)
+      //console.log('addToArray', editIndex)
       const newValue = editIndex === null ?
         [...value, newItem] :
         Object.assign([], value, {[editIndex]: newItem});
@@ -47,12 +47,20 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
 
     addNewItem = React.useCallback(e => {
       setAddItem(!addItem)
+      setEditIndex(null)
       setNewItem(getEmptyValue())
     }, [addItem,getEmptyValue]),
+
+    move = React.useCallback((oldIndex,newIndex) => {
+      let newValue = [...value]
+      newValue.splice((newIndex), 0, newValue.splice(oldIndex, 1)[0])
+      onChange(newValue)
+    },[value,onChange]),
 
     editItem = React.useCallback((v,i) => {
       setEditIndex(i);
       setNewItem(v);
+      setAddItem(false)
       node && node.focus();
     }, [node]),
 
@@ -72,7 +80,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       }
     }, [addToArray, buttonDisabled]);
 
-  // console.log('Input', Input)
+  console.log('rerender', value)
   return (
     <div className="w-full">
       <div className="flex flex-col px-4 sm:px-6 lg:px-12">
@@ -104,7 +112,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
         { !value.length ? null :
           value.map((v, i) => {
             return editIndex === i ?
-              <div>
+              <div key={i}>
                 <Input
                   { ...props }
                   { ...inputProps }
@@ -122,13 +130,15 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
                   </Button>
                 }
               </div> :
-              <div className='w-full'>
+              <div className='w-full' key={i}>
                 {/* <ValueItem key={ i } edit={ e => editItem(v,i) }
                   remove={ e => removeFromArray(v) }> */}
                   { <DisplayComp
                       value={ v }
                       edit={ e => editItem(v,i) }
                       remove={ e => removeFromArray(v) }
+                      moveUp={ i > 0 ? e => move(i, (i-1)) : null }
+                      moveDown={ i < value.length-1 ? e => move(i, (i+1)) : null }
                     /> }
                 {/*</ValueItem>*/}
               </div>

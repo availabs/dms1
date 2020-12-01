@@ -230,7 +230,7 @@ export default imgLoader(showLoading(MyEditor, LoadingOptions));
 const EditorWrapper = ({ children, hasFocus, id, ...props }) => {
   const theme = useTheme();
   return (
-    <div className={ `pt-15 relative rounded draft-js-editor ${ theme.inputBg } w-full
+    <div className={ `pt-16 relative rounded draft-js-editor ${ theme.inputBg } w-full
       ${ hasFocus ? theme.inputBorderFocus : theme.inputBorder }
     ` } { ...props }>
       { children }

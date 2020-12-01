@@ -170,7 +170,7 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   const { saveValues } = DmsCreateState;
 
-  const saveToLocalStorage = useCallback(throttle((storageId, DmsCreateState) => {
+  const saveToLocalStorage = useMemo(() => throttle((storageId, DmsCreateState) => {
     const { saveValues } = DmsCreateState;
     window.localStorage.setItem(storageId, JSON.stringify(saveValues));
   }, 500), []);
