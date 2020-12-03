@@ -162,7 +162,7 @@ export const getInput = (att, props, disabled) => {
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }
         />
-    ))  
+    ))
   }
   return React.forwardRef((props, ref) => (
     <InputComp id={ att.id } { ...inputProps } { ...props } ref={ ref }

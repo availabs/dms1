@@ -255,7 +255,7 @@ export const makeOnClick = (...args) => {
       if (!hasAuth) return Promise.resolve();
       return Promise.resolve(interact(action, itemId, propsToSeed))
         .then(() => /^api:/.test(action) && doThen())
-        .then(() => /^api:/.test(action) && interact("dms:back"));
+        // .then(() => /^api:/.test(action) && interact("dms:back"));
     }
   )
 }

@@ -61,7 +61,7 @@ const Warning = ({ warnings, type = "page" }) => {
           px-4 py-1 rounded shadow ${ theme.accent2 } ${ theme.text }
         ` }>
           { warnings.map(({ id, msg }) =>
-              <div key={ id } className={ `my-1 whitespace-no-wrap rounded ${ theme.text }` }>
+              <div key={ id } className={ `my-1 whitespace-nowrap rounded ${ theme.text }` }>
                 { msg }
               </div>
             )

@@ -4,12 +4,14 @@ import { EditorState, AtomicBlockUtils, Modifier, SelectionState } from 'draft-j
 
 export default (options = {}) => {
   const {
-    maxHeight = "15rem",
-    wrapper
-  } = options
+    wrappers = []
+  } = options;
 
-  const ImageBlock = ({ blockProps }) =>
-    <img className="block" src={ blockProps.src } style={ { maxHeight } } alt=""/>
+  const ImageBlock = React.forwardRef(({ blockProps, compProps }, ref) =>
+    <img src={ blockProps.src } key={ blockProps.key } { ...compProps } ref={ ref } alt=""/>
+  )
+
+  const WrappedBlock = wrappers.reduce((a, c) => c(a), ImageBlock);
 
   return {
     blockRendererFn: (block, { getEditorState }) => {
@@ -24,10 +26,11 @@ export default (options = {}) => {
 
         if (type === "IMAGE") {
           return {
-            component: wrapper ? wrapper(ImageBlock) : ImageBlock,
+            component: WrappedBlock,
             editable: false,
             props: {
-              src: entity.getData().src
+              src: entity.getData().src,
+              key: entityKey
             }
           };
         }
