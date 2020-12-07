@@ -6,7 +6,7 @@ import { useMessenger } from "../contexts/messenger-context"
 
 import { DmsButton } from "./dms-button"
 
-export default ({ title, shadowed = true, showHome = true, dmsActions = [], ...props }) => {
+export default ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
   const { stack, top, item } = useDms(),
     { pageMessages, attributeMessages } = useMessenger();
 
@@ -25,23 +25,28 @@ export default ({ title, shadowed = true, showHome = true, dmsActions = [], ...p
   if (top.dmsAction === "list") {
     dmsActions.unshift({ action: "dms:create" });
   }
-  // const theme = useTheme();
+  const theme = useTheme();
 
   return (
-    <HeaderComponent title={ title || `${ props.app } Manager` }>
-      <div className="flex-0 flex items-center">
-        { !pageMessages.length ? null :
-          <Warning warnings={ pageMessages }/>
-        }
-        { !attributeMessages.length ? null :
-          <Warning warnings={ attributeMessages } type="att"/>
-        }
-        { dmsActions.map(a =>
-            <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
-          )
-        }
-      </div>
-    </HeaderComponent>
+    <div className={ `
+        fixed top-0 left-0 right-0
+        ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
+      ` }>
+      <HeaderComponent title={ title || `${ props.app } Manager` }>
+        <div className="flex-0 flex items-center">
+          { !pageMessages.length ? null :
+            <Warning warnings={ pageMessages }/>
+          }
+          { !attributeMessages.length ? null :
+            <Warning warnings={ attributeMessages } type="att"/>
+          }
+          { dmsActions.map(a =>
+              <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
+            )
+          }
+        </div>
+      </HeaderComponent>
+    </div>
   )
 }
 const Warning = ({ warnings, type = "page" }) => {
