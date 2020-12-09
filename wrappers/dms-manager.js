@@ -39,6 +39,7 @@ export default Component =>
         }
         return child;
       })
+console.log("MANAGER:", children, props)
     return (
       <Component { ...props }>{ children }</Component>
     )

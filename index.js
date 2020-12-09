@@ -4,7 +4,7 @@ import DmsComponents from "./components"
 
 import { DmsButton } from "./components/dms-button"
 
-import { Header } from "@availabs/avl-components"
+import { HeaderComponent } from "@availabs/avl-components"
 
 import dmsManager from "./wrappers/dms-manager"
 
@@ -19,26 +19,33 @@ const DmsManager = ({ showHome = true, stack, top = {}, noHeader = false, classN
 
   if ((stack.length > 1) && showHome) {
      actions.push({
-       comp: DmsButton,
+       Comp: DmsButton,
        action: "dms:home"
      })
   }
   if (stack.length > 1) {
     actions.push({
-      comp: DmsButton,
+      Comp: DmsButton,
       action: "dms:back"
     })
   }
   if (dmsAction === "list") {
     actions.push({
-      comp: DmsButton,
+      Comp: DmsButton,
       action: "dms:create"
     })
   }
 
   return (
     <div className={ className }>
-      { noHeader ? null : <Header title={ props.title || `${ props.app } Manager` } actions={ actions }/>  }
+      { noHeader ? null :
+        <HeaderComponent title={ props.title || `${ props.app } Manager` }>
+          { actions.map(({ Comp, action }) =>
+              <Comp className="ml-2" key={ action } action={ action }/>
+            )
+          }
+        </HeaderComponent>
+      }
       { props.children }
     </div>
   )

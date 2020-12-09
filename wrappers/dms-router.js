@@ -11,7 +11,7 @@ import {
 import get from "lodash.get"
 
 const GetParams = ({ Component, ...others }) => {
-  const params = useParams(),
+  const routerParams = useParams(),
     { search } = useLocation();
   const searchParams = new URLSearchParams(search),
     props = [...searchParams.entries()]
@@ -19,7 +19,7 @@ const GetParams = ({ Component, ...others }) => {
         a[k] = v;
         return a;
       }, {});
-  return <Component { ...others } params={ { ...params, props } }/>;
+  return <Component { ...others } routerParams={ { ...routerParams, props } }/>;
 }
 
 const ParseItems = ({ Component, ...props}) => {
@@ -31,21 +31,28 @@ const ParseItems = ({ Component, ...props}) => {
 
   if (!id) return <Component key="no-id" { ...props }/>;
 
-  return <Component { ...props } params={ { action, id } }/>
+  return <Component { ...props } routerParams={ { action, id } }/>
 }
 
-export default (Component, options = {}) => {
-  return ({ ...props }) => {
+export default (Component, options = {}) =>
+  props => {
     const { path } = useRouteMatch(),
       alt11 = `${ path }/:action`,
       alt13 = `${ path }/:action/:id`,
-      alt21 = `${ path }/:action/:attribute/:value`,
-      routerProps = {
+      alt21 = `${ path }/:action/:attribute/:value`;
+
+    const location = useLocation(),
+      history = useHistory();
+
+    const routerProps = React.useMemo(() =>
+      ({
         basePath: path,
         useRouter: true,
-        location: useLocation(),
-        history: useHistory()
-      };
+        location,
+        history
+      })
+    , [path, location, history]);
+
     return (
       <RouterContext.Provider value={ routerProps }>
         <Switch>
@@ -62,4 +69,3 @@ export default (Component, options = {}) => {
       </RouterContext.Provider>
     )
   }
-}

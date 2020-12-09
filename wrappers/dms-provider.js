@@ -52,7 +52,6 @@ export default (Component, options = {}) => {
   class Wrapper extends React.Component {
     static defaultProps = {
       showHome: true,
-      defaultAction: "list",
       dataItems: [],
       app: "app-name",
       type: "format-type",
@@ -69,11 +68,10 @@ export default (Component, options = {}) => {
 
       this.state = {
         stack: [{
-          dmsAction: this.props.defaultAction,
+          dmsAction: "list",
           id: null,
           props: null
         }],
-        initialized: false,
         pageMessages: [],
         attributeMessages: []
       }
@@ -83,7 +81,7 @@ export default (Component, options = {}) => {
     }
 
     componentDidMount() {
-      const { action, id, props } = get(this.props, "params", {});
+      const { action, id, props } = get(this.props, "routerParams", {});
       if (action) {
         this.interact(action, id, props);
       }
