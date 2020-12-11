@@ -18,7 +18,8 @@ const defaultGetEmptyValue = () => null;
 
 export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
   DisplayComp = DefaultDisplay, inputProps, type, verify,
-  verifyValue, hasValue = defaultHasValue,
+  verifyValue = utilityVerify,
+  hasValue = defaultHasValue,
   getEmptyValue = defaultGetEmptyValue, ...props }, ref) => {
 
   value = value || [];
@@ -47,7 +48,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       disabled ||
       !hasValue(newItem) ||
       value.includes(newItem) ||
-      !(verifyValue ? verifyValue(newItem) : utilityVerify(newItem, type, verify)) ||
+      !verifyValue(newItem, type, verify) ||
       ((type === "number") && !value.reduce((a, c) => a && (+c !== +newItem), true))
     , [value, newItem, hasValue, verifyValue, verify, type, disabled]),
 

@@ -5,7 +5,7 @@ import {
   convertFromRaw,
   CompositeDecorator
 } from 'draft-js';
-import Editor from 'draft-js-plugins-editor';
+import Editor from "@draft-js-plugins/editor"
 
 import 'draft-js/dist/Draft.css';
 import './styles.css'
@@ -54,6 +54,14 @@ class ReadOnlyEditor extends React.Component {
   }
 
   componentDidMount() {
+    this.loadFromProps();
+  }
+  componentDidUpdate() {
+    if (!this.props.isRaw && (this.props.value !== this.state.editorState)) {
+      this.loadFromProps();
+    }
+  }
+  loadFromProps() {
     if (this.props.isRaw && this.props.value) {
       this.loadFromRawContent(this.props.value);
     }

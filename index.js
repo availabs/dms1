@@ -37,7 +37,7 @@ const DmsManager = ({ showHome = true, stack, top = {}, noHeader = false, classN
   }
 
   return (
-    <div className={ className }>
+    <>
       { noHeader ? null :
         <HeaderComponent title={ props.title || `${ props.app } Manager` }>
           { actions.map(({ Comp, action }) =>
@@ -46,8 +46,10 @@ const DmsManager = ({ showHome = true, stack, top = {}, noHeader = false, classN
           }
         </HeaderComponent>
       }
-      { props.children }
-    </div>
+      <div className={ className }>
+        { props.children }
+      </div>
+    </>
   )
 }
 const NoFormat = () => <div large className="p-5">No format supplied!!!</div>;

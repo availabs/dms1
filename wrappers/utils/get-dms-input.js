@@ -47,7 +47,7 @@ const getComp = (value, att, i = null) => {
     return (
       <div key={ key }>
         <div className="font-bold">{ name }</div>
-        <ReadOnlyEditor value={ value } isRaw={ false }/>
+        <ReadOnlyEditor key={ att.key } value={ value } isRaw={ false }/>
       </div>
     )
   }
@@ -65,7 +65,7 @@ const getComp = (value, att, i = null) => {
 
 const makeDisplayComp = attribute => {
   return ({ value }) => {
-    const comp = React.useMemo(() => getComp(value, attribute), [value])
+    const comp = React.useMemo(() => getComp(value, attribute), [value]);
     return (
       <div>
         { comp }
@@ -127,7 +127,7 @@ export const getInput = (att, props, disabled) => {
       InputComp = DmsInput;
       inputProps = { Attribute: att };
       getEmptyValue = getEmptyFormatValue.bind(null, att, props);
-      DisplayComp = att.isArray && makeDisplayComp(att);
+      DisplayComp = makeDisplayComp(att);
       break;
     case "boolean":
       InputComp = BooleanInput;

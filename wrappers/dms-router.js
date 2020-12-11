@@ -1,5 +1,7 @@
 import React from "react"
 
+import { Redirect } from "react-router-dom"
+
 import { RouterContext } from "../contexts"
 
 import {
@@ -26,12 +28,15 @@ const ParseItems = ({ Component, ...props}) => {
   const { action, attribute, value } = useParams();
 
   const id = get(props, "dataItems", []).reduce((a, c) => {
-    return get(c, ["data", attribute], null) === value ? c.id : a;
+    const cValue = get(c, ["data", attribute], null)
+      .toString().toLowerCase();
+    return cValue === value.toString().toLowerCase() ? c.id : a;
   }, undefined);
 
   if (!id) return <Component key="no-id" { ...props }/>;
 
-  return <Component { ...props } routerParams={ { action, id } }/>
+  return <Redirect to={ `${ props.basePath }/${ action }/${ id }` }/>
+  // return <Component { ...props } routerParams={ { action, id } }/>
 }
 
 export default (Component, options = {}) =>

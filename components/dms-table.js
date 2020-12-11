@@ -8,7 +8,7 @@ import get from "lodash.get"
 
 import { makeFilter, prettyKey, getValue, useDmsColumns } from "../utils"
 
-const DmsTable = ({ sortBy, sortOrder, columns, expandColumns, initialPageSize, Container, ...props }) => {
+const DmsTable = ({ sortBy, sortOrder, columns, expandColumns, initialPageSize, ...props }) => {
   const [attributes, actions] = useDmsColumns(columns);
 
   const filter = makeFilter(props),

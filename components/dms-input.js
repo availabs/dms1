@@ -47,6 +47,7 @@ export default React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, on
                 <div key={ key } className={ `border-l-4 pl-2 pb-2 mb-2 last:mb-0
                   ${ !att.verifyValue(value[key]) ? theme.borderDanger : att.required ? theme.borderSuccess :
                     att.checkHasValue(value[key]) ? theme.borderInfo : theme.borderLight }
+                  ${ att.hidden ? 'hidden' : '' }
                 ` }>
                   <label htmlFor={ att.id }>{ att.name }</label>
                   <Input { ...props } onChange={ att.onChange } value={ value[key] }
