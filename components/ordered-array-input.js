@@ -1,4 +1,5 @@
 import React from "react"
+import get from 'lodash.get'
 
 import {
   Button, useSetRefs,
@@ -29,10 +30,10 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
     [openEditor, setOpenEditor] = React.useState(false),
 
     addToArray = React.useCallback(e => {
-      const newValue = editIndex === null ? [...value, newItem] : [...value];
-      if (editIndex) {
-        value[editIndex] = newItem;
-      }
+      const newValue = editIndex === null ?
+        [...value, newItem] :
+        Object.assign([], value, {[editIndex]: newItem});
+
       onChange(newValue);
       setNewItem(getEmptyValue());
       setEditIndex(null);
@@ -81,19 +82,20 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       onChange(newValue);
     }, [onChange, value]);
 
-// console.log("VALUE:", value)
-
   return (
     <div className="w-full">
       <div className="flex flex-col">
         <div>
-          <Button onClick={ createNewItem }
+          <Button 
+            className={'p-2'}
+            onClick={ createNewItem }
             buttonTheme={ openEditor ? "buttonDanger" : "buttonSuccess" }>
-            { openEditor ? 'cancel' : 'create new' }
+            { openEditor ? 'cancel' : <div>create new</div> }
           </Button>
         </div>
         <div style={ { display: openEditor ? "block" : "none" } }>
-          <EditComponent Input={ Input }
+          <EditComponent 
+            Input={ Input }
             { ...props } { ...inputProps }
             ref={ useSetRefs(ref, setNode) }
             value={ newItem }
@@ -113,36 +115,47 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       </div>
       { !value.length ? null :
         value.map((v, i) =>
-          <div className="p-2 my-2 border rounded" key={ i }>
-            { editIndex === i ?
-              <EditComponent Input={ Input }
-                { ...props } { ...inputProps }
-                value={ newItem }
-                onChange={ setNewItem }
-                autoFocus={ autoFocus }
-                onKeyDown={ onKeyDown }
-                disabled ={ disabled }
-                placeholder={ `Type a value...`}>
+          editIndex === i ?
+            <EditComponent 
+              Input={ Input }
+              { ...props } { ...inputProps }
+              value={ newItem }
+              onChange={ setNewItem }
+              autoFocus={ autoFocus }
+              onKeyDown={ onKeyDown }
+              disabled ={ disabled }
+              
+              move={ m => move(i, m) }
 
+              addToArray={ addToArray }
+              placeholder={ `Type a value...`}>
+
+              {get(Input.settings, 'hasControls', false) ? '' :
                 <Button onClick={ addToArray }
-                  buttonTheme="buttonSuccess"
-                  disabled={ buttonDisabled }>
-                  save
-                </Button>
-              </EditComponent>
-            :
+                buttonTheme="buttonSuccess"
+                disabled={ buttonDisabled }>
+                Save
+              </Button>}
+            </EditComponent>
+          :
+            get(Input.settings, 'hasControls', false) ? 
+              <DisplayComp 
+                  value={ v }
+                  edit={ e => editItem(v,i) }
+                  remove={ e => removeFromArray(v) }
+                  moveUp={ i > 0 ? e => move(i,-1) : null }
+                  moveDown={ i < value.length-1 ? e => move(i,1) : null }
+                /> : 
               <div className='w-full'>
                 <ValueItem
                   edit={ e => editItem(v, i) }
                   remove={ e => removeFromArray(v) }
                   move={ m => move(i, m) }
-                  index={ i } length={ value.length }>
-
-                  <DisplayComp value={ v }/>
+                  index={ i } 
+                  length={ value.length }>
+                    <DisplayComp value={ v } />
                 </ValueItem>
               </div>
-            }
-          </div>
         )
       }
     </div>
