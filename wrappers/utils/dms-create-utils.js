@@ -46,7 +46,9 @@ export class DmsCreateStateClass {
     }
     this.mapOldToNew = (oldKey, newKey, value) => {
       this.ignoredAttributes.push(oldKey);
-      this.attributes.find(d => d.key === newKey).onChange(value);
+console.log("MAP OLD TO NEW:", oldKey, newKey, value)
+      const att = this.attributes.find(d => d.key === newKey);
+      att.onChange(att.mapOldToNew(value));
     };
     this.deleteOld = oldKey => {
       this.ignoredAttributes.push(oldKey);
@@ -148,6 +150,8 @@ class Attribute {
 
     }
   }
+  mapOldToNew = value => value;
+
   getDefault = props => {
     this.defaultValue = getValue(this.default, { props });
     this.defaultLoaded = this.checkHasValue(this.defaultValue);
@@ -209,6 +213,13 @@ class EditorAttribute extends Attribute {
 
     this.value = this.isArray ? [] : createEditorState(null);
   }
+  mapOldToNew = value => {
+    if (Array.isArray(value)) {
+      return value.map(createEditorState);
+    }
+    return createEditorState(value);
+  };
+
   getValue = value => {
     if (Array.isArray(value)) {
       return value.map(v => convertToRaw(v.getCurrentContent()));
@@ -279,6 +290,38 @@ class DmsAttribute extends Attribute {
 
     this.required = this.isArray ? this.required : isRequired(this.attributes);
   }
+  _mapOldToNew = (value, attributes) => {
+    return attributes.reduce((a, c) => {
+      const Value = get(value, c.key),
+        length = get(Value, "length", 0);
+      if (c.type === "dms-format") {
+        if (c.isArray && length) {
+          a[c.key] = Value.map(v => this._mapOldToNew(v, c.attributes));
+        }
+        else if (checkDmsValue(Value, c.attributes)) {
+          a[c.key] = this._mapOldToNew(Value, c.attributes);
+        }
+      }
+      else if (c.type === "richtext") {
+        if (c.isArray && length) {
+          a[c.key] = Value.map(createEditorState)
+        }
+        else {
+          a[c.key] = createEditorState(Value);
+        }
+      }
+      else {
+        a[c.key] = Value;
+      }
+      return a;
+    }, {});
+  };
+  mapOldToNew = value => {
+    if (Array.isArray(value)) {
+      return value.map(v => this._mapOldToNew(v, this.attributes));
+    }
+    return this._mapOldToNew(value, this.attributes);
+  };
   _getDefault = (props, attributes) => {
     return attributes.reduce((a, c) => {
       if (c.type === "dms-format") {

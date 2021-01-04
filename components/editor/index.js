@@ -8,7 +8,7 @@ import {
   convertToRaw,
   convertFromRaw
 } from 'draft-js';
-import Editor from 'draft-js-plugins-editor';
+import Editor from "@draft-js-plugins/editor"
 
 import 'draft-js/dist/Draft.css';
 import './styles.css'
@@ -21,7 +21,7 @@ import makeSuperSubScriptPlugin from "./super-sub-script"
 import makePositionablePlugin from "./positionable"
 import makeStuffPlugin from "./stuff"
 
-// console.log("?????", useTheme, imgLoader, showLoading)
+import makeResizablePlugin from "./resizable"
 
 const buttonPlugin = makeButtonPlugin(),
   { BlockQuoteButton,
@@ -50,9 +50,14 @@ const toolbarPlugin = makeToolbarPlugin(),
   { Toolbar, Separator } = toolbarPlugin;
 
 const positionablePlugin = makePositionablePlugin(),
-  { positionable } = positionablePlugin;
+  resizablePlugin = makeResizablePlugin();
 
-const imagePlugin = makeImagePlugin({ wrapper: positionable }),
+const imagePlugin = makeImagePlugin({
+    wrappers: [
+      positionablePlugin.wrapper,
+      resizablePlugin.wrapper
+    ]
+  }),
   { addImage } = imagePlugin;
 
 const linkItPlugin = makeLinkItPlugin();
@@ -63,7 +68,10 @@ const plugins = [
   imagePlugin,
   linkItPlugin,
   makeSuperSubScriptPlugin(),
+
   positionablePlugin,
+  resizablePlugin,
+
   makeStuffPlugin()
 ];
 
@@ -126,9 +134,6 @@ class MyEditor extends React.Component {
   componentWillUnmount() {
     this.editor = null;
   }
-  componentDidUpdate(oldProps, oldState) {
-// console.log("DID UPDATE:", this.props.value)
-  }
 
   focus() {
     setTimeout(() => { this.editor && this.editor.focus(); }, 25);
@@ -148,6 +153,7 @@ class MyEditor extends React.Component {
     this.props.uploadImage(file)
       .then(({ filename, url }) => {
         this.handleChange(addImage(url, getEditorState()));
+        // this.handleChange(addImage(getEditorState(), url));
       });
     return "handled";
   }
@@ -169,7 +175,7 @@ class MyEditor extends React.Component {
       <EditorWrapper id={ this.props.id }
         hasFocus={ this.state.hasFocus }>
 
-        <div className="px-2 pb-2 clearfix">
+        <div className="px-2 pb-2 flow-root">
           <Editor ref={ n => this.editor = n }
             placeholder={ this.props.placeholder }
             editorState={ this.props.value }
@@ -232,7 +238,8 @@ export default imgLoader(showLoading(MyEditor, LoadingOptions));
 const EditorWrapper = ({ children, hasFocus, id, ...props }) => {
   const theme = useTheme();
   return (
-    <div className={ `pt-15 relative rounded draft-js-editor ${ theme.inputBg } w-full
+    <div className={ `pt-16 relative rounded draft-js-editor
+      ${ theme.inputBg.replace("cursor-pointer", "cursor-auto") } w-full
       ${ hasFocus ? theme.inputBorderFocus : theme.inputBorder }
     ` } { ...props }>
       { children }

@@ -74,7 +74,8 @@ export const processAction = action => {
     buttonTheme: null,
     disabled: false,
     then: null,
-    doThen: () => Promise.resolve()
+    doThen: () => Promise.resolve(),
+    goBackAfterApiAction: true
   };
   if (typeof action === "string") {
     response.action = action;

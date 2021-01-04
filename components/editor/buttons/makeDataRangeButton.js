@@ -13,18 +13,19 @@ export default (dataType, buttonType, store, shift, max, min = 0) =>
     } = store;
     const editorState = getEditorState();
 
-    const getStartData = contentState =>
+    const getStartData = React.useCallback(contentState =>
       contentState
         .getBlockForKey(editorState.getSelection().getStartKey())
         .getData()
+    , [editorState]);
 
-    const isActive = () => {
-      if (shift > 0) return false;
-      const data = getStartData(editorState.getCurrentContent());
-      return data.get(dataType) > min;
-    }
+    const isDisabled = React.useCallback(() => {
+      const data = getStartData(editorState.getCurrentContent()),
+        value = data.get(dataType) || 0;
+      return (value + shift < min) || (value + shift > max);
+    }, [getStartData, editorState]);
 
-    const click = e => {
+    const click = React.useCallback(e => {
       e.preventDefault();
       const contentState = editorState.getCurrentContent(),
         selectionState = editorState.getSelection(),
@@ -45,10 +46,10 @@ export default (dataType, buttonType, store, shift, max, min = 0) =>
           { currentContent: newContentState }
         )
       );
-    }
+    }, [getStartData, editorState, setEditorState]);
 
     return (
-      <Button active={ isActive() } onClick={ click }>
+      <Button disabled={ isDisabled() } onClick={ click }>
         { ICONS[buttonType] }
       </Button>
     )

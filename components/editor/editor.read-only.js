@@ -5,7 +5,7 @@ import {
   convertFromRaw,
   CompositeDecorator
 } from 'draft-js';
-import Editor from 'draft-js-plugins-editor';
+import Editor from "@draft-js-plugins/editor"
 
 import 'draft-js/dist/Draft.css';
 import './styles.css'
@@ -16,11 +16,17 @@ import makeLinkItPlugin from "./linkify-it"
 import makeSuperSubScriptPlugin from "./super-sub-script"
 import makePositionablePlugin from "./positionable"
 import makeStuffPlugin from "./stuff"
+import makeResizablePlugin from "./resizable"
 
-const positionablePlugin = makePositionablePlugin(),
-  { positionable } = positionablePlugin;
+const positionablePlugin = makePositionablePlugin();
+const resizablePlugin = makeResizablePlugin();
 
-const imagePlugin = makeImagePlugin({ wrapper: positionable });
+const imagePlugin = makeImagePlugin({
+  wrappers: [
+    positionablePlugin.wrapper,
+    resizablePlugin.wrapper
+  ]
+});
 
 const linkItPlugin = makeLinkItPlugin();
 
@@ -30,6 +36,7 @@ const plugins = [
   linkItPlugin,
   makeSuperSubScriptPlugin(),
   positionablePlugin,
+  resizablePlugin,
   makeStuffPlugin()
 ];
 
@@ -45,32 +52,43 @@ class ReadOnlyEditor extends React.Component {
   state = {
     editorState: EditorState.createEmpty()
   }
+
   componentDidMount() {
-    if (this.props.isRaw) {
-      this.loadFromSavedState(this.props.value);
-    }
-    else {
-      this.setState(state => ({ editorState: this.props.value }));
+    this.loadFromProps();
+  }
+  componentDidUpdate() {
+    if (!this.props.isRaw && (this.props.value !== this.state.editorState)) {
+      this.loadFromProps();
     }
   }
-  loadFromSavedState(content) {
+  loadFromProps() {
+    if (this.props.isRaw && this.props.value) {
+      this.loadFromRawContent(this.props.value);
+    }
+    else if (!this.props.isRaw) {
+      this.onChange(this.props.value);
+    }
+  }
+
+  loadFromRawContent(content) {
     const editorState = EditorState.createWithContent(
-      content ? convertFromRaw(content) : convertFromRaw({blocks:[], entityMap:{}}),
+      convertFromRaw(content),
       decorator
     );
-    this.setState(state => ({ editorState }));
+    this.onChange(editorState);
+  }
+
+  onChange(editorState) {
+    this.setState({ editorState });
   }
 
   render() {
-    if(!this.props.value) return <span />
-    const { editorState } = this.state;
+    if (!this.props.value) return null;
 
-    
     return (
-      <div className="draft-js-editor read-only-editor">
-        <Editor placeholder="Type a value..."
-          editorState={ editorState || {} }
-          onChange={ editorState => this.setState(state => ({ editorState })) }
+      <div className="draft-js-editor read-only-editor flow-root">
+        <Editor editorState={ this.state.editorState }
+          onChange={ es => this.onChange(es) }
           plugins={ plugins }
           readOnly={ true }
           spellCheck={ this.props.spellCheck }/>

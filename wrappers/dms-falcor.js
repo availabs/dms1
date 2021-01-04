@@ -1,7 +1,6 @@
 import React from "react"
 
-import { connect } from "react-redux"
-import { reduxFalcor } from "@availabs/avl-components"
+import { avlFalcor } from "@availabs/avl-components"
 
 import get from "lodash.get"
 
@@ -21,14 +20,14 @@ const processPath = (path, props) => {
   })
 }
 
-const getDataItems = (path, state, filter = false) => {
-  const length = get(state, ["falcorCache", ...path, "length"], 0);
+const getDataItems = (path, falcorCache, filter = false) => {
+  const length = get(falcorCache, [...path, "length"], 0);
 
   const dataItems = [];
   for (let i = 0; i < length; ++i) {
-    const p = get(state, ["falcorCache", ...path, "byIndex", i, "value"], null);
+    const p = get(falcorCache, [...path, "byIndex", i, "value"], null);
     if (p) {
-      const dataItem = JSON.parse(JSON.stringify(get(state, ["falcorCache", ...p], {}))),
+      const dataItem = JSON.parse(JSON.stringify(get(falcorCache, [...p], {}))),
         data = get(dataItem, ["data", "value"], null);
       if (data) {
         dataItem.data = data;
@@ -50,6 +49,7 @@ export default (WrappedComponent, options = {}) => {
     MOUNTED = false;
     componentDidMount() {
       this.MOUNTED = true;
+      this.fetchFalcorDeps();
     }
     componentWillUnmount() {
       this.MOUNTED = false;
@@ -137,11 +137,11 @@ export default (WrappedComponent, options = {}) => {
       )
     }
   }
-  const mapStateToProps = (state, props) => {
+  const mS2P = (falcorCache, props) => {
     const { app, type } = get(props, "format", props),
       defaultPath = ["dms", "data", `${ app }+${ type }`],
       path = processPath(get(props, "path", defaultPath), props),
-      dataItems = getDataItems(path, state, makeFilter(props.filter, { props, item: get(props, type, null) }));
+      dataItems = getDataItems(path, falcorCache, makeFilter(props.filter, { props, item: get(props, type, null) }));
     return {
       dataItems,
       path,
@@ -149,8 +149,8 @@ export default (WrappedComponent, options = {}) => {
       type
     }
   }
-  const mS2P = (state, props) =>
-    mapStateToProps(state, { ...props, ...options });
+  const mapCacheToProps = (falcorCache, props) =>
+    mS2P(falcorCache, { ...props, ...options });
 
-  return connect(mS2P, null)(reduxFalcor(Wrapper));
+  return avlFalcor(Wrapper, { mapCacheToProps });
 }

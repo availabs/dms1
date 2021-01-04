@@ -5,10 +5,10 @@ import makeWrapper from "./wrapper"
 export default () => {
   const store = {};
 
-  const adjustPosition = (block, contentState, position) => {
+  const adjustWidth = (block, contentState, width) => {
     const entityKey = block.getEntityAt(0),
       editorState = store.getEditorState();
-    contentState.mergeEntityData(entityKey, { position });
+    contentState.mergeEntityData(entityKey, { width });
     store.setEditorState(
       EditorState.forceSelection(
         editorState,
@@ -22,6 +22,9 @@ export default () => {
       store.getEditorState = getEditorState;
       store.setEditorState = setEditorState;
       store.getReadOnly = getReadOnly;
+
+      store.resizing = 0;
+      store.screenX = null;
     },
     blockRendererFn: (block, { getEditorState }) => {
       if (block.getType() === "atomic") {
@@ -30,12 +33,12 @@ export default () => {
 
         if (!entityKey) return null;
 
-        const { position = 0 } = contentState.getEntity(entityKey).getData();
-        
+        const { width = null } = contentState.getEntity(entityKey).getData();
+
         return {
           props: {
-            adjustPosition,
-            position,
+            adjustWidth,
+            width,
             key: entityKey
           }
         };

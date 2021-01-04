@@ -54,7 +54,7 @@ export const getItem = (id, props) => {
 const makePath = (basePath, action, itemId = null, props = null) =>
   `${ basePath }/${ action }${ itemId ? `/${ itemId }` : "" }`
 
-const normalizeArgs = (dmsAction, item, props, ...rest) => {
+const normalizeArgs = (dmsAction, item, props) => {
   let itemId = null;
   if (typeof item === "object") {
     itemId = get(item, "id", null);
@@ -69,16 +69,14 @@ const normalizeArgs = (dmsAction, item, props, ...rest) => {
   }
   return [
     processAction(dmsAction),
-    item,
-    itemId,
+    item, itemId,
     props,
-    props.interact,
-    ...rest
+    props.interact
   ]
 }
 export const makeInteraction = (...args) => {
   const [
-    { action, seedProps, disabled, doThen, ...rest },
+    { action, seedProps, disabled, doThen, goBackAfterApiAction, ...rest },
     item, itemId,
     props,
     interact
@@ -136,14 +134,15 @@ export const makeInteraction = (...args) => {
             e.stopPropagation();
             return Promise.resolve(interact(action, itemId, propsToSeed))
               .then(() => doThen())
-              .then(() => push({
-                pathname: get(stack, [stackLength - 1], basePath),
-                search: get(searchStack, [searchLength - 1], ""),
-                state: {
-                  stack: stack.slice(0, -1),
-                  search: searchStack.slice(0, -1)
-                }
-              }))
+              .then(() => goBackAfterApiAction && push({
+                  pathname: get(stack, [stackLength - 1], basePath),
+                  search: get(searchStack, [searchLength - 1], ""),
+                  state: {
+                    stack: stack.slice(0, -1),
+                    search: searchStack.slice(0, -1)
+                  }
+                })
+              )
           }
         }
       : { type: "link",

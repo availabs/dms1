@@ -46,14 +46,14 @@ export default (Component, options = {}) => {
   const {
     authRules = {},
     buttonThemes = {},
-    imgUploadUrl
+    imgUploadUrl = 'https://graph.availabs.org'
   } = options;
 
   class Wrapper extends React.Component {
     static defaultProps = {
       showHome: true,
-      defaultAction: "list",
       dataItems: [],
+      defaultAction: ["list", null, null],
       app: "app-name",
       type: "format-type",
       format: null,
@@ -69,11 +69,10 @@ export default (Component, options = {}) => {
 
       this.state = {
         stack: [{
-          dmsAction: this.props.defaultAction,
-          id: null,
-          props: null
+          dmsAction: this.props.defaultAction[0],
+          id: this.props.defaultAction[1],
+          props: this.props.defaultAction[2]
         }],
-        initialized: false,
         pageMessages: [],
         attributeMessages: []
       }
@@ -83,7 +82,7 @@ export default (Component, options = {}) => {
     }
 
     componentDidMount() {
-      const { action, id, props } = get(this.props, "params", {});
+      const { action, id, props } = get(this.props, "routerParams", {});
       if (action) {
         this.interact(action, id, props);
       }
