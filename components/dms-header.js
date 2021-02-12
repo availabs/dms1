@@ -11,19 +11,22 @@ export default ({ title, shadowed = true, showHome = true, dmsActions = [], navB
     { pageMessages, attributeMessages } = useMessenger();
 
   if (stack.length > 1) {
-    dmsActions.unshift({
-      action: "dms:back",
-      // showConfirm: Boolean(pageMessages.length)
-    });
+    dmsActions = [
+      { action: "dms:back" },
+      ...dmsActions
+    ];
   }
   if ((stack.length > 1) && showHome) {
-     dmsActions.unshift({
-       action: "dms:home",
-       // showConfirm: Boolean(pageMessages.length)
-     });
+    dmsActions = [
+      { action: "dms:home" },
+      ...dmsActions
+    ];
   }
   if (top.dmsAction === "list") {
-    dmsActions.unshift({ action: "dms:create" });
+    dmsActions = [
+      { action: "dms:create" },
+      ...dmsActions
+    ];
   }
   const theme = useTheme();
 
