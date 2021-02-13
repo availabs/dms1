@@ -7,6 +7,31 @@ import { DmsButton } from "./dms-button"
 import { dmsCreate, dmsEdit } from "../wrappers/dms-create"
 import DmsWizard from "./dms-wizard"
 
+export const SectionInputs = ({ createState }) => {
+
+  const theme = useTheme();
+
+  return (
+    <div className="w-full flex flex-col justify-center">
+      { createState.activeSection.attributes
+          .map(({ Input, key, ...att }, i) => (
+            <div key={ key }
+              className={ `border-l-4 pl-2 mb-2 pb-2
+                ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-2xl"}
+                ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
+                    att.hasValue ? theme.borderInfo : theme.borderLight }
+                ${ att.hidden ? 'hidden' : '' }
+              ` }>
+              <label htmlFor={ att.id }>{ att.name }</label>
+              <Input value={ att.value } onChange={ att.onChange }
+                autoFocus={ i === 0 }/>
+            </div>
+          ))
+      }
+    </div>
+  )
+}
+
 const BadAttributeRow = ({ oldKey, value, attributes, deleteOld, mapOldToNew, ...props }) => {
   const [newAtt, setNewAtt] = React.useState(null);
   return (
@@ -61,21 +86,7 @@ export const DmsCreateBase = ({ createState, ...props }) => {
               action={ createState.dmsAction } props={ props }/>
           </div>
           <div className="w-full flex flex-col justify-center">
-            { createState.activeSection.attributes
-                .map(({ Input, key, ...att }, i) => (
-                  <div key={ key }
-                    className={ `border-l-4 pl-2 mb-2 pb-2
-                      ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-2xl"}
-                      ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
-                          att.hasValue ? theme.borderInfo : theme.borderLight }
-                      ${ att.hidden ? 'hidden' : '' }
-                    ` }>
-                    <label htmlFor={ att.id }>{ att.name }</label>
-                    <Input value={ att.value } onChange={ att.onChange }
-                      autoFocus={ i === 0 }/>
-                  </div>
-                ))
-            }
+            <SectionInputs createState={ createState }/>
           </div>
         </form>
       </DmsWizard>

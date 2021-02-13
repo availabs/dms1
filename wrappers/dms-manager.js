@@ -17,8 +17,7 @@ export default Component =>
 
           children.push(React.cloneElement(child,
             { ...props,
-              ...get(props, ["top", "props"], {}), // <-- result of DmsAction seedProps,
-              [props.type]: props.item
+              ...get(props, ["top", "props"], {}) // <-- result of DmsAction seedProps,
             }
           ));
         }
@@ -32,8 +31,7 @@ export default Component =>
           return React.cloneElement(child,
             { dmsActions,
               ...props,
-              ...get(props, ["top", "props"], {}), // <-- result of DmsAction seed props
-              [props.type]: props.item
+              ...get(props, ["top", "props"], {}) // <-- result of DmsAction seed props
             }
           );
         }

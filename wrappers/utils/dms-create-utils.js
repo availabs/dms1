@@ -16,8 +16,12 @@ import {
   verifyDmsValue
 } from "../../utils"
 
+
+export const makeStorageId = (format = {}, item = null) =>
+  `${ format.app }+${ format.type }${ item ? `:${ item.id }` : `` }`;
+
 export class DmsCreateStateClass {
-  constructor(setValues, dmsMsg) {
+  constructor(setValues, dmsMsg, format) {
     this.numSections = 0;
     this.activeSection = null;
     this.activeIndex = -1;
@@ -46,7 +50,6 @@ export class DmsCreateStateClass {
     }
     this.mapOldToNew = (oldKey, newKey, value) => {
       this.ignoredAttributes.push(oldKey);
-console.log("MAP OLD TO NEW:", oldKey, newKey, value)
       const att = this.attributes.find(d => d.key === newKey);
       att.onChange(att.mapOldToNew(value));
     };
@@ -54,9 +57,16 @@ console.log("MAP OLD TO NEW:", oldKey, newKey, value)
       this.ignoredAttributes.push(oldKey);
       setValues(prev => ({ ...prev }));
     };
-    this.ininitialized = false;
+    this.initialized = false;
     this.initValues = (values, initialized = true) => {
+      const saved = this.setValues,
+        tempValues = {};
+      this.setValues = (key, value) => {
+        tempValues[key] = value;
+      }
       this.attributes.forEach(att => att.initValue(values[att.key]));
+      setValues(prev => ({ ...prev, ...tempValues }));
+      this.setValues = saved;
       this.initialized = initialized;
     }
 
@@ -73,6 +83,18 @@ console.log("MAP OLD TO NEW:", oldKey, newKey, value)
         delete this.msgIds[type];
       }
     }
+    this.clearValues = () => {
+      const saved = this.setValues;
+      this.setValues = (key, value) => {};
+      this.attributes.forEach(att => {
+        att.initValue(null);
+        att.defaultLoaded = false;
+      });
+      setValues({});
+      this.setValues = saved;
+      this.initialized = false;
+      window.localStorage.removeItem(makeStorageId(format));
+    };
     this.cleanup = () => {
       const msgIds = Object.values(this.msgIds);
       if (msgIds.length) {
@@ -100,11 +122,26 @@ console.log("MAP OLD TO NEW:", oldKey, newKey, value)
 }
 
 class Attribute {
-  constructor(att, setValues, dmsMsg, props) {
+  constructor(att, setValues, dmsMsg, props, mode) {
     Object.assign(this, att);
 
     this.name = this.name || prettyKey(this.key);
     this.Input = getInput(this, props);
+
+    this.hidden = Boolean(getValue(att.hidden, { props }));
+
+    const editable = getValue(att.editable, { props });
+    switch (editable) {
+      case "before-create":
+        this.editable = (mode === "create");
+        break;
+      case "after-create":
+        this.editable = (mode === "edit");
+        break;
+      default:
+        this.editable = editable !== false;
+        break;
+    }
 
     this.value = this.isArray ? [] : null;
     this.hasValue = false;
@@ -464,12 +501,12 @@ class DmsAttribute extends Attribute {
     return verifyDmsValue(value, attributes, this.required);
   }
 }
-export const makeNewAttribute = (att, setValues, dmsMsg, props) => {
+export const makeNewAttribute = (att, setValues, dmsMsg, props, mode) => {
   if (att.type === "dms-format") {
-    return new DmsAttribute(att, setValues, dmsMsg, props);
+    return new DmsAttribute(att, setValues, dmsMsg, props, mode);
   }
   else if (att.type === "richtext") {
-    return new EditorAttribute(att, setValues, dmsMsg, props);
+    return new EditorAttribute(att, setValues, dmsMsg, props, mode);
   }
-  return new Attribute(att, setValues, dmsMsg, props);
+  return new Attribute(att, setValues, dmsMsg, props, mode);
 }

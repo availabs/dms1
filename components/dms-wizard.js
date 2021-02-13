@@ -2,13 +2,11 @@ import React from "react"
 
 import { Button, useTheme } from "@availabs/avl-components"
 
-//import styled from "styled-components"
-
 export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, children, ...props }) => {
   const theme = useTheme();
   return (
     <div className="w-full">
-      { sections.length < 2 ? null :
+      { sections.filter(({ hidden }) => !hidden).length < 2 ? null :
         <>
           <div className="text-2xl mb-2 wizard"
             width={ ((activeIndex + 1) / sections.length) * 100 }>
@@ -52,5 +50,3 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
     </div>
   )
 }
-
-

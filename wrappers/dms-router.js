@@ -49,14 +49,12 @@ export default (Component, options = {}) =>
     const location = useLocation(),
       history = useHistory();
 
-    const routerProps = React.useMemo(() =>
-      ({
-        basePath: path,
-        useRouter: true,
-        location,
-        history
-      })
-    , [path, location, history]);
+    const routerProps = React.useMemo(() => ({
+      basePath: path,
+      useRouter: true,
+      location,
+      history
+    }), [path, location, history]);
 
     return (
       <RouterContext.Provider value={ routerProps }>

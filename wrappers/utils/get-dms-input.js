@@ -19,14 +19,105 @@ import { getValue } from "../../utils"
 
 import get from "lodash.get"
 
-const getDomain = (att, props) => {
-  if (att.domain) {
-    if (typeof att.domain === "string") {
-      return getValue(att.domain, { props }) || [];
-    }
-    return att.domain;
+const makeDisplayComp = attribute => {
+  return ({ value }) => {
+    const comp = React.useMemo(() => getComp(value, attribute), [value]);
+    return (
+      <div>
+        { comp }
+      </div>
+    )
   }
-  return null;
+}
+function getEmptyFormatValue(att, props) {
+  return att.attributes.reduce((a, c) => {
+    if (c.type === "dms-format") {
+      a[c.key] = getEmptyFormatValue(c);
+    }
+    else if (c.type === "richtext") {
+      a[c.key] = createEmpty();
+    }
+    else if ("default" in c) {
+      a[c.key] = getValue(c.default, props);
+    }
+    return a;
+  }, {})
+}
+
+const AvailableInputs = {
+  $default: {
+    InputComp: Input,
+    getInputProps: (att, props) => ({ type: att.type }),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  textarea: {
+    InputComp: TextArea,
+    getInputProps: (att, props) => ({}),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  select: {
+    InputComp: Select,
+    getInputProps: (att, props) => {
+      const inputProps = get(att, "inputProps", {});
+      return {
+        ...inputProps,
+        domain: getDomain(att, props),
+        multi: Boolean(att.isArray)
+      }
+    },
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  object: {
+    InputComp: ObjectInput,
+    getInputProps: (att, props) => ({}),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  boolean: {
+    InputComp: BooleanInput,
+    getInputProps: (att, props) => ({}),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  markdown: {
+    InputComp: MarkdownInput,
+    getInputProps: (att, props) => ({}),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
+  },
+  richtext: {
+    InputComp: Editor,
+    getInputProps: (att, props) => ({ imgUploadUrl: get(props, "imgUploadUrl") }),
+    getDisplayComp: (att, props) => EditorDisplayComp,
+    getEmptyValueFunc: (att, props) => createEmpty
+  },
+  img: {
+    InputComp: ImgInput,
+    getInputProps: (att, props) => ({ imgUploadUrl: get(props, "imgUploadUrl") })
+  },
+  "dms-format": {
+    InputComp: DmsInput,
+    getInputProps: (att, props) => ({ Attribute: att }),
+    getDisplayComp: (att, props) => makeDisplayComp(att),
+    getEmptyValueFunc: (att, props) => getEmptyFormatValue.bind(null, att, props)
+  },
+}
+
+export const addInput = (type, inputData) => {
+  AvailableInputs[type] = inputData;
+}
+const getInputData = type =>
+  type in AvailableInputs ? AvailableInputs[type] : AvailableInputs["$default"];
+
+const getDomain = (att, props) => {
+  const domain = get(att, ["inputProps", "domain"], get(att, "domain", null));
+  if (typeof domain === "string") {
+    return getValue(domain, { props }) || [];
+  }
+  return domain;
 }
 
 const getComp = (value, att, i = null) => {
@@ -63,81 +154,53 @@ const getComp = (value, att, i = null) => {
     </div>)
 }
 
-const makeDisplayComp = attribute => {
-  return ({ value }) => {
-    const comp = React.useMemo(() => getComp(value, attribute), [value]);
-    return (
-      <div>
-        { comp }
-      </div>
-    )
-  }
-}
-function getEmptyFormatValue(att, props) {
-  return att.attributes.reduce((a, c) => {
-    if (c.type === "dms-format") {
-      a[c.key] = getEmptyFormatValue(c);
-    }
-    else if (c.type === "richtext") {
-      a[c.key] = createEmpty();
-    }
-    else if ("default" in c) {
-      a[c.key] = getValue(c.default, props);
-    }
-    return a;
-  }, {})
-}
-
 const EditorDisplayComp = ({ value }) =>
   <ReadOnlyEditor value={ value } isRaw={ false }/>;
 
 export const getInput = (att, props, disabled) => {
-  let { type, isArray = false } = att,
-    domain = getDomain(att, props);
+  const { type, isArray } = att;
 
-  if (domain) {
-    return props => (
-      <Select { ...props } multi={ isArray } domain={ domain } id={ att.id }
-        disabled={ disabled || (att.editable === false) }/>
-    );
-  }
-  let InputComp = null, inputProps = {}, DisplayComp, getEmptyValue;
+  let {
+    InputComp,
+    getInputProps,
+    getDisplayComp,
+    getEmptyValueFunc
+  } = getInputData(type);
 
-  switch (type) {
-    case "markdown":
-      InputComp = MarkdownInput;
-      break;
-    case "textarea":
-      InputComp = TextArea;
-      break;
-    case "img":
-      InputComp = ImgInput;
-      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
-      break;
-    case "richtext":
-      InputComp = Editor;
-      DisplayComp = EditorDisplayComp;
-      getEmptyValue = createEmpty;
-      inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
-      break;
-    case "object":
-      InputComp = ObjectInput;
-      break;
-    case "dms-format":
-      InputComp = DmsInput;
-      inputProps = { Attribute: att };
-      getEmptyValue = getEmptyFormatValue.bind(null, att, props);
-      DisplayComp = makeDisplayComp(att);
-      break;
-    case "boolean":
-      InputComp = BooleanInput;
-      break;
-    default:
-      InputComp = Input;
-      inputProps = { type };
-      break;
-  }
-  if (isArray) {
+  let inputProps = getInputProps(att, props),
+    DisplayComp = getDisplayComp(att, props),
+    getEmptyValue = getEmptyValueFunc(att, props);
+
+  // switch (type) {
+  //   case "select":
+  //     break;
+  //   case "markdown":
+  //     break;
+  //   case "textarea":
+  //     break;
+  //   case "img":
+  //     // inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
+  //     break;
+  //   case "richtext":
+  //     // DisplayComp = EditorDisplayComp;
+  //     // getEmptyValue = createEmpty;
+  //     // inputProps = { imgUploadUrl: get(props, "imgUploadUrl") };
+  //     break;
+  //   case "object":
+  //     break;
+  //   case "dms-format":
+  //     // inputProps = { Attribute: att };
+  //     // getEmptyValue = getEmptyFormatValue.bind(null, att, props);
+  //     // DisplayComp = makeDisplayComp(att);
+  //     break;
+  //   case "boolean":
+  //     break;
+  //   default:
+  //     // InputComp = AvailableInputs["$default"];
+  //     // inputProps = { type };
+  //     break;
+  // }
+  if (isArray && (type !== "select")) {
     return React.forwardRef((props, ref) => (
       type === 'dms-format' ?
         <OrderedArrayInput

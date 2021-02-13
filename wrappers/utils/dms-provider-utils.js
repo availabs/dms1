@@ -28,21 +28,21 @@ const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
 }
 
 export const processFormat = (format, formats = {}) => {
-  format = JSON.parse(JSON.stringify(format));
+  const Format = Object.assign({}, format);
 
-  if (format.registerFormats) {
-    format.registerFormats.forEach(f => processFormat(f, formats));
+  if (Format.registerFormats) {
+    Format.registerFormats.forEach(f => processFormat(f, formats));
   }
 
-  if (!format.sections) {
-    const attributes = format.attributes;
-    format.attributes = flattenAttributes([{ attributes }]);
+  if (!Format.sections) {
+    const attributes = Format.attributes;
+    Format.attributes = flattenAttributes([{ attributes }]);
   }
   else {
-    format.attributes = flattenAttributes(format.sections.reverse());
+    Format.attributes = flattenAttributes(Format.sections.reverse());
   }
 
-  formats[`${ format.app }+${ format.type }`] = format;
+  formats[`${ Format.app }+${ Format.type }`] = Format;
 
   return formats;
 }
