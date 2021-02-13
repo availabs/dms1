@@ -2,9 +2,9 @@ import React from "react"
 
 import { useTheme, HeaderComponent } from "@availabs/avl-components"
 import { useDms } from "../contexts/dms-context"
-import { useMessenger } from "../contexts/messenger-context"
 
 import { DmsButton } from "./dms-button"
+import { useMessenger } from "../contexts/messenger-context"
 
 export default ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
   const { stack, top, item } = useDms(),

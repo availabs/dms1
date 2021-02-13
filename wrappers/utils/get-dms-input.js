@@ -38,7 +38,7 @@ function getEmptyFormatValue(att, props) {
       a[c.key] = createEmpty();
     }
     else if ("default" in c) {
-      a[c.key] = getValue(c.default, props);
+      a[c.key] = getValue(c.default, { props });
     }
     return a;
   }, {})
@@ -96,7 +96,9 @@ const AvailableInputs = {
   },
   img: {
     InputComp: ImgInput,
-    getInputProps: (att, props) => ({ imgUploadUrl: get(props, "imgUploadUrl") })
+    getInputProps: (att, props) => ({ imgUploadUrl: get(props, "imgUploadUrl") }),
+    getDisplayComp: (att, props) => null,
+    getEmptyValueFunc: (att, props) => null
   },
   "dms-format": {
     InputComp: DmsInput,

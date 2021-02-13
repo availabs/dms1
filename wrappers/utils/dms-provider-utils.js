@@ -1,5 +1,6 @@
 import { processAction, checkAuth } from "../../utils"
 
+import clonedeep from "lodash.clonedeep"
 import get from "lodash.get"
 
 const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
@@ -28,15 +29,14 @@ const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
 }
 
 export const processFormat = (format, formats = {}) => {
-  const Format = Object.assign({}, format);
+  const Format = clonedeep(format);
 
   if (Format.registerFormats) {
     Format.registerFormats.forEach(f => processFormat(f, formats));
   }
 
   if (!Format.sections) {
-    const attributes = Format.attributes;
-    Format.attributes = flattenAttributes([{ attributes }]);
+    Format.attributes = flattenAttributes([{ attributes: Format.attributes }]);
   }
   else {
     Format.attributes = flattenAttributes(Format.sections.reverse());

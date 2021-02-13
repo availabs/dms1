@@ -76,7 +76,6 @@ const BadAttributeRow = ({ oldKey, value, attributes, deleteOld, mapOldToNew, ..
   )
 }
 export const DmsCreateBase = ({ createState, ...props }) => {
-  const theme = useTheme();
   return (
     <div>
       <DmsWizard { ...createState }>

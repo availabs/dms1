@@ -4,7 +4,6 @@ import {
   AuthContext,
   ButtonContext,
   DmsContext,
-  MessengerContext,
   RouterContext
 } from "../contexts"
 import { checkAuth } from "../utils"
@@ -32,15 +31,15 @@ export const useMakeOnClick = (dmsAction, item, props) => {
   return makeOnClick(dmsAction, item, props)
 }
 
-const processMessage = msg => ({
-  canGoPrev: true,
-  canGoNext: false,
-  canGo: true,
-  ...msg
-})
+// const processMessage = msg => ({
+//   canGoPrev: true,
+//   canGoNext: false,
+//   canGo: true,
+//   ...msg
+// })
 
-let UNIQUE_ID = 0;
-const newMsgId = () => `dms-msg-${ ++UNIQUE_ID }`;
+// let UNIQUE_ID = 0;
+// const newMsgId = () => `dms-msg-${ ++UNIQUE_ID }`;
 
 export default (Component, options = {}) => {
   const {
@@ -72,9 +71,7 @@ export default (Component, options = {}) => {
           dmsAction: this.props.defaultAction[0],
           id: this.props.defaultAction[1],
           props: this.props.defaultAction[2]
-        }],
-        pageMessages: [],
-        attributeMessages: []
+        }]
       }
       this.interact = this.interact.bind(this);
       this.makeInteraction = this.makeInteraction.bind(this);
@@ -148,47 +145,47 @@ export default (Component, options = {}) => {
       return stack[stack.length - 1];
     }
 
-    sendPageMessage = msg => {
-      this.setState(state => {
-        const { pageMessages } = state;
-        return {
-          pageMessages: [...pageMessages, processMessage(msg)]
-        }
-      })
-    }
-    removePageMessage = ids => {
-      this.setState(state => {
-        const { pageMessages } = state;
-        return {
-          pageMessages: pageMessages.filter(msg => !ids.includes(msg.id))
-        };
-      })
-    }
-    sendAttributeMessage = msg => {
-      this.setState(state => {
-        const { attributeMessages } = state;
-        return {
-          attributeMessages: [...attributeMessages, processMessage(msg)]
-        };
-      })
-    }
-    removeAttributeMessage = ids => {
-      this.setState(state => {
-        const { attributeMessages } = state;
-        return {
-          attributeMessages: attributeMessages.filter(msg => !ids.includes(msg.id))
-        };
-      })
-    }
-    getMessengerProps = () => ({
-      pageMessages: this.state.pageMessages,
-      attributeMessages: this.state.attributeMessages,
-      sendPageMessage: this.sendPageMessage,
-      removePageMessage: this.removePageMessage,
-      sendAttributeMessage: this.sendAttributeMessage,
-      removeAttributeMessage: this.removeAttributeMessage,
-      newMsgId
-    })
+    // sendPageMessage = msg => {
+    //   this.setState(state => {
+    //     const { pageMessages } = state;
+    //     return {
+    //       pageMessages: [...pageMessages, processMessage(msg)]
+    //     }
+    //   })
+    // }
+    // removePageMessage = ids => {
+    //   this.setState(state => {
+    //     const { pageMessages } = state;
+    //     return {
+    //       pageMessages: pageMessages.filter(msg => !ids.includes(msg.id))
+    //     };
+    //   })
+    // }
+    // sendAttributeMessage = msg => {
+    //   this.setState(state => {
+    //     const { attributeMessages } = state;
+    //     return {
+    //       attributeMessages: [...attributeMessages, processMessage(msg)]
+    //     };
+    //   })
+    // }
+    // removeAttributeMessage = ids => {
+    //   this.setState(state => {
+    //     const { attributeMessages } = state;
+    //     return {
+    //       attributeMessages: attributeMessages.filter(msg => !ids.includes(msg.id))
+    //     };
+    //   })
+    // }
+    // getMessengerProps = () => ({
+    //   pageMessages: this.state.pageMessages,
+    //   attributeMessages: this.state.attributeMessages,
+    //   sendPageMessage: this.sendPageMessage,
+    //   removePageMessage: this.removePageMessage,
+    //   sendAttributeMessage: this.sendAttributeMessage,
+    //   removeAttributeMessage: this.removeAttributeMessage,
+    //   newMsgId
+    // })
 
     getDmsProps() {
       const { app, type, dataItems, format } = this.props,
@@ -213,15 +210,13 @@ export default (Component, options = {}) => {
     }
     render() {
       const { user } = this.props,
-        dmsProps = this.getDmsProps(),
-        msgProps = this.getMessengerProps();
+        dmsProps = this.getDmsProps();
+
       return (
         <DmsContext.Provider value={ dmsProps }>
           <AuthContext.Provider value={ { authRules, user } }>
             <ButtonContext.Provider value={ { buttonThemes } }>
-              <MessengerContext.Provider value={ msgProps }>
-                <Component { ...this.props } { ...dmsProps } { ...msgProps }/>
-              </MessengerContext.Provider>
+              <Component { ...this.props } { ...dmsProps }/>
             </ButtonContext.Provider>
           </AuthContext.Provider>
         </DmsContext.Provider>
