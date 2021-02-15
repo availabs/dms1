@@ -50,8 +50,8 @@ const dmsRouter = (Component, options = {}) =>
       history = useHistory();
 
     const routerProps = React.useMemo(() => ({
-      basePath: path,
       useRouter: true,
+      basePath: path,
       location,
       history
     }), [path, location, history]);
