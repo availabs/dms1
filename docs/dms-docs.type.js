@@ -1,4 +1,4 @@
-export default {
+const DocsFormat = {
   app: "dms",
   type: "dms-docs",
 
@@ -26,3 +26,4 @@ export default {
     }
   ]
 }
+export default DocsFormat;

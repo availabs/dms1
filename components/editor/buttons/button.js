@@ -2,7 +2,7 @@ import React from "react"
 
 import { useTheme } from "@availabs/avl-components"
 
-export default ({ active, disabled, children, ...props }) => {
+const EditorButton = ({ active, disabled, children, ...props }) => {
   const theme = useTheme();
   return (
     <button { ...props } disabled={ disabled } tabIndex={ -1 }
@@ -18,3 +18,4 @@ export default ({ active, disabled, children, ...props }) => {
     </button>
   )
 }
+export default EditorButton;

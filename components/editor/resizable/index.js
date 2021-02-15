@@ -2,7 +2,7 @@ import { EditorState } from 'draft-js';
 
 import makeWrapper from "./wrapper"
 
-export default () => {
+const ResizablePlugin = () => {
   const store = {};
 
   const adjustWidth = (block, contentState, width) => {
@@ -48,3 +48,4 @@ export default () => {
     wrapper: makeWrapper(store)
   }
 }
+export default ResizablePlugin

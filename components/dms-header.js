@@ -6,7 +6,7 @@ import { useDms } from "../contexts/dms-context"
 import { DmsButton } from "./dms-button"
 import { useMessenger } from "../contexts/messenger-context"
 
-export default ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
+const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
   const { stack, top, item } = useDms(),
     { pageMessages, attributeMessages } = useMessenger();
 
@@ -32,7 +32,7 @@ export default ({ title, shadowed = true, showHome = true, dmsActions = [], navB
 
   return (
     <div className={ `
-        fixed top-0 left-0 right-0
+        fixed top-0 left-0 right-0 z-50
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
       ` }>
       <HeaderComponent title={ title || `${ props.app } Manager` }>
@@ -79,3 +79,4 @@ const Warning = ({ warnings, type = "page" }) => {
     </div>
   )
 }
+export default DmsHeader;

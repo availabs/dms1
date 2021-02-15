@@ -6,7 +6,7 @@ import throttle from "lodash.throttle"
 
 import { combineCompProps } from "../utils"
 
-export default store =>
+const resizableWrapper = store =>
   Component =>
     React.forwardRef(({ compProps = {}, ...props }, ref) => {
       const {
@@ -98,3 +98,4 @@ export default store =>
         </figure>
       )
     })
+export default resizableWrapper

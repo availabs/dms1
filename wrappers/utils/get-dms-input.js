@@ -204,7 +204,7 @@ export const getInput = (att, props, disabled) => {
   // }
   if (isArray && (type !== "select")) {
     return React.forwardRef((props, ref) => (
-      type === 'dms-format' ?
+      type === 'dms-format' ? (
         <OrderedArrayInput
           { ...props }
           Input={ props.EditComp || InputComp }
@@ -215,7 +215,7 @@ export const getInput = (att, props, disabled) => {
           DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }
-        /> :
+        /> ) : (
         <ArrayInput
           { ...props }
           Input={ props.EditComp || InputComp }
@@ -226,7 +226,7 @@ export const getInput = (att, props, disabled) => {
           DisplayComp={ props.DisplayComp || DisplayComp } ref={ ref }
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }
-        />
+        /> )
     ))
   }
   return React.forwardRef((props, ref) => (

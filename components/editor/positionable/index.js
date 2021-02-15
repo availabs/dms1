@@ -2,7 +2,7 @@ import { EditorState } from 'draft-js';
 
 import makeWrapper from "./wrapper"
 
-export default () => {
+const PositionablePlugin = () => {
   const store = {};
 
   const adjustPosition = (block, contentState, position) => {
@@ -31,7 +31,7 @@ export default () => {
         if (!entityKey) return null;
 
         const { position = 0 } = contentState.getEntity(entityKey).getData();
-        
+
         return {
           props: {
             adjustPosition,
@@ -45,3 +45,4 @@ export default () => {
     wrapper: makeWrapper(store)
   }
 }
+export default PositionablePlugin

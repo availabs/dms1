@@ -17,7 +17,7 @@ const createElements = ({ data, Comp }, interact) =>
     </Comp>
   )
 
-export default (Component, options = {}) => {
+const dmsConsumer = (Component, options = {}) => {
   const {
     mapDataToProps = {},
     interactOnMount = []
@@ -68,3 +68,4 @@ export default (Component, options = {}) => {
     return <Component { ...newProps }/>
   }
 }
+export default dmsConsumer;

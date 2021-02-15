@@ -42,7 +42,7 @@ const strategy = (contentBlock, callback) => {
   links && links.forEach(({ index, lastIndex }) => callback(index, lastIndex));
 }
 
-export default (options = {}) => {
+const linkifyitPlugin = (options = {}) => {
   const store = {};
   return {
     initialize: ({ getReadOnly }) => {
@@ -55,3 +55,4 @@ export default (options = {}) => {
     ]
   }
 }
+export default linkifyitPlugin

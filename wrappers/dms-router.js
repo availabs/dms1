@@ -39,7 +39,7 @@ const ParseItems = ({ Component, ...props}) => {
   // return <Component { ...props } routerParams={ { action, id } }/>
 }
 
-export default (Component, options = {}) =>
+const dmsRouter = (Component, options = {}) =>
   props => {
     const { path } = useRouteMatch(),
       alt11 = `${ path }/:action`,
@@ -72,3 +72,4 @@ export default (Component, options = {}) =>
       </RouterContext.Provider>
     )
   }
+export default dmsRouter;

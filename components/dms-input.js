@@ -10,7 +10,7 @@ import {
   useDmsSections
 } from "./utils/dms-input-utils"
 
-export default React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, onBlur, onChange, value, ...props }, ref) => {
+const DmsInput = React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, onBlur, onChange, value, ...props }, ref) => {
   value = value || {};
 
   const Props = { ...props, ...useDms(), user: useAuth().user };
@@ -63,3 +63,4 @@ export default React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, on
     </div>
   )
 })
+export default DmsInput;

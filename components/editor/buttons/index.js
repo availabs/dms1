@@ -7,7 +7,7 @@ import makeDataRangeButton from "./makeDataRangeButton"
 import makeBlockStyleButton from "./makeBlockStyleButton"
 import makeInlineStyleButton from "./makeInlineStyleButton"
 
-export default () => {
+const ButtonsPlugin = () => {
   const store = {
     blockMap: Immutable.OrderedMap()
   };
@@ -69,3 +69,4 @@ export default () => {
     TextOutdentButton: makeDataRangeButton("textIndent", "outdent", store, -1, 4)
   }
 }
+export default ButtonsPlugin;

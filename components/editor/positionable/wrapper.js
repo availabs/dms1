@@ -35,7 +35,7 @@ const BUTTONS = [
   </svg>
 ]
 
-export default store =>
+const positionableWrapper = store =>
   Component =>
     React.forwardRef(({ compProps = {}, ...props }, ref) => {
       const {
@@ -105,3 +105,4 @@ export default store =>
         </figure>
       )
     })
+export default positionableWrapper

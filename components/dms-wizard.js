@@ -2,7 +2,7 @@ import React from "react"
 
 import { Button, useTheme } from "@availabs/avl-components"
 
-export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, children, ...props }) => {
+const DmsWizard = ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, children, ...props }) => {
   const theme = useTheme();
   return (
     <div className="w-full">
@@ -50,3 +50,4 @@ export default ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, child
     </div>
   )
 }
+export default DmsWizard;

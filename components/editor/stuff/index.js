@@ -113,7 +113,7 @@ const onTab = (store, e) => {
   );
 }
 
-export default () => {
+const StuffPlugin = () => {
   const store = {};
 
   return {
@@ -127,3 +127,4 @@ export default () => {
     blockRenderMap
   }
 }
+export default StuffPlugin

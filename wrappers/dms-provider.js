@@ -41,7 +41,7 @@ export const useMakeOnClick = (dmsAction, item, props) => {
 // let UNIQUE_ID = 0;
 // const newMsgId = () => `dms-msg-${ ++UNIQUE_ID }`;
 
-export default (Component, options = {}) => {
+const dmsProvider = (Component, options = {}) => {
   const {
     authRules = {},
     buttonThemes = {},
@@ -225,3 +225,4 @@ export default (Component, options = {}) => {
   }
   return Wrapper;
 }
+export default dmsProvider;

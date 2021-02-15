@@ -17,7 +17,7 @@ const DefaultDisplay = ({ value }) => {
 };
 const defaultGetEmptyValue = () => null;
 
-export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
+const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
   DisplayComp = DefaultDisplay, inputProps, type, verify,
   verifyValue = utilityVerify, hasValue = defaultHasValue,
   getEmptyValue = defaultGetEmptyValue, ...props }, ref) => {
@@ -86,7 +86,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
     <div className="w-full">
       <div className="flex flex-col">
         <div>
-          <Button 
+          <Button
             className={'p-2'}
             onClick={ createNewItem }
             buttonTheme={ openEditor ? "buttonDanger" : "buttonSuccess" }>
@@ -94,7 +94,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
           </Button>
         </div>
         <div style={ { display: openEditor ? "block" : "none" } }>
-          <EditComponent 
+          <EditComponent
             Input={ Input }
             { ...props } { ...inputProps }
             ref={ useSetRefs(ref, setNode) }
@@ -116,7 +116,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
       { !value.length ? null :
         value.map((v, i) =>
           editIndex === i ?
-            <EditComponent 
+            <EditComponent
               Input={ Input }
               { ...props } { ...inputProps }
               value={ newItem }
@@ -124,7 +124,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
               autoFocus={ autoFocus }
               onKeyDown={ onKeyDown }
               disabled ={ disabled }
-              
+
               move={ m => move(i, m) }
 
               addToArray={ addToArray }
@@ -138,20 +138,20 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
               </Button>}
             </EditComponent>
           :
-            get(Input.settings, 'hasControls', false) ? 
-              <DisplayComp 
+            get(Input.settings, 'hasControls', false) ?
+              <DisplayComp
                   value={ v }
                   edit={ e => editItem(v,i) }
                   remove={ e => removeFromArray(v) }
                   moveUp={ i > 0 ? e => move(i,-1) : null }
                   moveDown={ i < value.length-1 ? e => move(i,1) : null }
-                /> : 
+                /> :
               <div className='w-full'>
                 <ValueItem
                   edit={ e => editItem(v, i) }
                   remove={ e => removeFromArray(v) }
                   move={ m => move(i, m) }
-                  index={ i } 
+                  index={ i }
                   length={ value.length }>
                     <DisplayComp value={ v } />
                 </ValueItem>
@@ -161,6 +161,7 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
     </div>
   )
 })
+export default OrderedArrayInput;
 
 const ValueItem = ({ edit, remove, move, index, length, children }) =>
   <div>

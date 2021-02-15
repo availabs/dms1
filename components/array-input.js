@@ -16,7 +16,7 @@ const DefaultDisplay = ({ value }) => {
 };
 const defaultGetEmptyValue = () => null;
 
-export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
+const ArrayInput = React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
   DisplayComp = DefaultDisplay, inputProps, type, verify,
   verifyValue = utilityVerify,
   hasValue = defaultHasValue,
@@ -87,3 +87,4 @@ export default React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
     </div>
   )
 })
+export default ArrayInput;

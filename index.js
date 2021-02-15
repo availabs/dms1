@@ -54,7 +54,8 @@ const DmsManager = ({ showHome = true, stack, top = {}, noHeader = false, classN
 }
 const NoFormat = () => <div large className="p-5">No format supplied!!!</div>;
 
-export default {
+const DMS = {
   ...DmsComponents,
   "dms-manager": dmsManager(DmsManager)
 }
+export default DMS;

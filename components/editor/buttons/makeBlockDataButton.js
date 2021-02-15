@@ -5,7 +5,7 @@ import { Modifier, EditorState } from 'draft-js';
 import Button from "./button"
 import ICONS from "./icons"
 
-export default (dataType, buttonType, store) =>
+const makeBlockDataButton = (dataType, buttonType, store) =>
   () => {
     const {
       getEditorState,
@@ -49,3 +49,4 @@ export default (dataType, buttonType, store) =>
       </Button>
     )
   }
+export default makeBlockDataButton;

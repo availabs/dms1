@@ -2,7 +2,7 @@ import React from "react"
 
 import { useTheme } from "@availabs/avl-components"
 
-export default ({ title, body, footer, children }) => {
+const DmsCard = ({ title, body, footer, children }) => {
   const theme = useTheme();
   return (
     <div>
@@ -23,3 +23,4 @@ export default ({ title, body, footer, children }) => {
     </div>
   )
 }
+export default DmsCard;

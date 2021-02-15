@@ -10,7 +10,7 @@ const Icon = ({ children }) =>
     { children }
   </div>
 
-export default ({
+const Icons = ({
   // "blockquote": (
   //   <svg viewBox="0 0 24 24"
   //     height="24" width="24"
@@ -150,7 +150,7 @@ export default ({
     <Icon><span className="fas fa-outdent" style={ { fontSize: "1.25em" } }/></Icon>
   )
 })
-
+export default Icons;
 /*const BoldOld =
   <svg height="24" width="24"
     viewBox="0 0 24 24"

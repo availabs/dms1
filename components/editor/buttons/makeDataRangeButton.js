@@ -5,7 +5,7 @@ import { Modifier, EditorState } from 'draft-js';
 import Button from "./button"
 import ICONS from "./icons"
 
-export default (dataType, buttonType, store, shift, max, min = 0) =>
+const makeDataRangeButton = (dataType, buttonType, store, shift, max, min = 0) =>
   () => {
     const {
       getEditorState,
@@ -54,3 +54,4 @@ export default (dataType, buttonType, store, shift, max, min = 0) =>
       </Button>
     )
   }
+export default makeDataRangeButton;

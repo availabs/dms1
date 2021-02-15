@@ -4,7 +4,7 @@ import { compareActions } from "../utils"
 
 import get from "lodash.get"
 
-export default Component =>
+const dmsManager = Component =>
   ({ children, ...props }) => {
 
     const dmsActions = [];
@@ -41,3 +41,4 @@ export default Component =>
       <Component { ...props }>{ children }</Component>
     )
   }
+export default dmsManager;

@@ -5,7 +5,7 @@ import { RichUtils } from 'draft-js';
 import Button from "./button"
 import ICONS from "./icons"
 
-export default (buttonType, store) =>
+const makeInlineStyleButton = (buttonType, store) =>
   () => {
     const {
       getEditorState,
@@ -29,3 +29,4 @@ export default (buttonType, store) =>
       </Button>
     )
   }
+export default makeInlineStyleButton;

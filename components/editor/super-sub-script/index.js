@@ -21,7 +21,7 @@ const makeStrategy = script =>
     }
   }
 
-export default () => ({
+const SuperSubScriptPlugin = () => ({
   decorators: [
     { strategy: makeStrategy("SUPERSCRIPT"),
       component: props => <sup>{ props.children }</sup>
@@ -31,3 +31,4 @@ export default () => ({
     }
   ]
 })
+export default SuperSubScriptPlugin

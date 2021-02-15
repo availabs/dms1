@@ -5,7 +5,7 @@ import { RichUtils } from 'draft-js';
 import Button from "./button"
 import ICONS from "./icons"
 
-export default (buttonType, store) =>
+const makeBlockStyleButton = (buttonType, store) =>
   () => {
     const {
       getEditorState,
@@ -31,3 +31,4 @@ export default (buttonType, store) =>
       </Button>
     )
   }
+export default makeBlockStyleButton;

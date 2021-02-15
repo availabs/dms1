@@ -16,7 +16,7 @@ export const SectionInputs = ({ createState }) => {
       { createState.activeSection.attributes
           .map(({ Input, key, ...att }, i) => (
             <div key={ key }
-              className={ `border-l-4 pl-2 mb-2 pb-2
+              className={ `border-l-4 pl-2 mb-2 pb-1
                 ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-2xl"}
                 ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
                     att.hasValue ? theme.borderInfo : theme.borderLight }
@@ -27,6 +27,18 @@ export const SectionInputs = ({ createState }) => {
                 autoFocus={ i === 0 }/>
             </div>
           ))
+      }
+    </div>
+  )
+}
+
+export const BadAttributes = ({ createState }) => {
+  return (
+    <div className="flex">
+      { createState.badAttributes.map(att =>
+          <BadAttributeRow { ...att } oldKey={ att.key }
+            { ...createState }/>
+        )
       }
     </div>
   )
@@ -89,12 +101,7 @@ export const DmsCreateBase = ({ createState, ...props }) => {
           </div>
         </form>
       </DmsWizard>
-      <div className="flex">
-        { createState.badAttributes.map(att =>
-          <BadAttributeRow { ...att } oldKey={ att.key }
-            { ...createState }/>
-        ) }
-      </div>
+      <BadAttributes createState={ createState }/>
     </div>
   );
 }

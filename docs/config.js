@@ -2,7 +2,7 @@ import DMS_DOCS from "./dms-docs.type"
 
 import DocsPage from "./docs-page"
 
-export default ({
+const Config = ({
   type: "dms-content",
   wrappers: [
 // wrapper order is important
@@ -141,3 +141,4 @@ export default ({
     }
   ]
 })
+export default Config;

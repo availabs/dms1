@@ -45,13 +45,17 @@ export class DmsCreateStateClass {
     this.badAttributes = [];
     this.ignoredAttributes = [];
 
+    this.doLiveUpdate = false;
+
+    this.saveValues = {};
+
     this.setValues = (key, value) => {
       setValues(prev => ({ ...prev, [key]: value }));
     }
     this.mapOldToNew = (oldKey, newKey, value) => {
       this.ignoredAttributes.push(oldKey);
       const att = this.attributes.find(d => d.key === newKey);
-      att.onChange(att.mapOldToNew(value));
+      att.onChange(att.mapOldToNew(value), false);
     };
     this.deleteOld = oldKey => {
       this.ignoredAttributes.push(oldKey);
@@ -85,6 +89,7 @@ export class DmsCreateStateClass {
     // }
     this.clearValues = () => {
       const saved = this.setValues;
+      this.saveValues = {};
       this.setValues = (key, value) => {};
       this.attributes.forEach(att => {
         att.initValue(null);
@@ -92,6 +97,7 @@ export class DmsCreateStateClass {
       });
       setValues({});
       this.setValues = saved;
+      this.saveValues = {};
       this.initialized = false;
       window.localStorage.removeItem(makeStorageId(format));
     };
@@ -151,11 +157,12 @@ class Attribute {
     this.defaultLoaded = false;
     this.defaultValue = null;
 
-    this.onChange = value => {
+    this.onChange = (value, doLive = true) => {
       this.value = value;
       this.hasValue = this.checkHasValue(value);
       this.verified = this.verifyValue(value);
       // this.sendWarnings(value);
+      this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
       setValues(this.key, value);
     }
 
@@ -232,11 +239,11 @@ class Attribute {
   // };
   initValue = value => {
     if (this.isArray) {
-      this.onChange(value || [])
+      this.onChange(value || [], false);
     }
     else {
       // this.onChange(this.type === "boolean" ? Boolean(value) : value);
-      this.onChange(value);
+      this.onChange(value, false);
     }
   }
   // getWarnings = () => Object.values(this.msgIds);
@@ -265,10 +272,10 @@ class EditorAttribute extends Attribute {
   }
   initValue = value => {
     if (this.isArray) {
-      this.onChange(value ? value.map(createEditorState) : []);
+      this.onChange(value ? value.map(createEditorState) : [], false);
     }
     else {
-      this.onChange(createEditorState(value));
+      this.onChange(createEditorState(value), false);
     }
   }
   checkHasValue = value => {
@@ -316,8 +323,8 @@ class DmsAttribute extends Attribute {
   constructor(att, setValues, props) {
     super(att, setValues, props);
 
-    this.Format = JSON.parse(JSON.stringify(props.registeredFormats[att.format]));
-    this.attributes = getAttributes(this.Format, props.registeredFormats);
+    const format = props.registeredFormats[att.format];
+    this.attributes = getAttributes(format, props.registeredFormats);
 
     this.value = this.isArray ? [] : {};
 
@@ -436,7 +443,8 @@ class DmsAttribute extends Attribute {
   initValue = value => {
     this.onChange(
       this.isArray ? (value ? value.map(v => this._initValue(v, this.attributes)) : []) :
-      this._initValue(value, this.attributes)
+      this._initValue(value, this.attributes),
+      false
     );
   }
   checkHasValue = (value, attributes = this.attributes) => {

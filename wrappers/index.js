@@ -10,7 +10,7 @@ import { dmsCreate, dmsEdit } from "./dms-create"
 
 import dmsShare from "./dms-share"
 
-export default {
+const Wrappers = {
   "dms-falcor": dmsFalcor,
   "dms-view": dmsView,
   "dms-router": dmsRouter,
@@ -21,3 +21,4 @@ export default {
   "dms-create": dmsCreate,
   "dms-edit": dmsEdit
 }
+export default Wrappers;

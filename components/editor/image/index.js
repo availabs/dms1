@@ -2,7 +2,7 @@ import React from "react"
 
 import { EditorState, AtomicBlockUtils, Modifier, SelectionState } from 'draft-js';
 
-export default (options = {}) => {
+const ImagePlugin = (options = {}) => {
   const {
     wrappers = []
   } = options;
@@ -74,3 +74,4 @@ export default (options = {}) => {
     }
   }
 }
+export default ImagePlugin

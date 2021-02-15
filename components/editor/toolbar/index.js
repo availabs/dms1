@@ -5,7 +5,7 @@ import { useTheme } from "@availabs/avl-components"
 const Separator = ({ ...props }) =>
   <div className="border-r border-l mx-2 border-current" style={ { borderColor: "currentColor" } }/>
 
-export default (options = {}) => {
+const ToolbarPlugin = (options = {}) => {
   const {
     position = "top",
     direction = "row"
@@ -33,3 +33,4 @@ export default (options = {}) => {
     Separator
   }
 }
+export default ToolbarPlugin;

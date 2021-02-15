@@ -1,6 +1,6 @@
 import config from "./config"
 
-export default {
+const route = {
   path: "/dms-docs",
   mainNav: true,
   // exact: true,
@@ -15,3 +15,4 @@ export default {
   },
   component: config
 }
+export default route;

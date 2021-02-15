@@ -42,7 +42,7 @@ const DefaultOptions = {
   loading: true
 }
 
-export default (WrappedComponent, options = {}) => {
+const dmsFalcor = (WrappedComponent, options = {}) => {
   class Wrapper extends React.Component {
     state = { loading: 0 };
 
@@ -154,3 +154,4 @@ export default (WrappedComponent, options = {}) => {
 
   return avlFalcor(Wrapper, { mapCacheToProps });
 }
+export default dmsFalcor;

@@ -4,7 +4,7 @@ import DmsTable from "./dms-table"
 import DmsHeader from "./dms-header"
 import DmsContent from "./dms-content"
 
-export default {
+const Comps = {
   "dms-card": DmsCard,
   "dms-create": DmsCreate,
   "dms-edit": DmsEdit,
@@ -12,3 +12,4 @@ export default {
   "dms-header": DmsHeader,
   "dms-content": DmsContent
 }
+export default Comps;

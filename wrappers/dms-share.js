@@ -4,7 +4,7 @@ import get from "lodash.get"
 
 import { mapDataToProps as doMapDataToProps } from "../utils"
 
-export default (Component, options = {}) => {
+const dmsShare = (Component, options = {}) => {
   const {
     mapDataToProps = {},
     propsToShare = {}
@@ -33,3 +33,4 @@ export default (Component, options = {}) => {
     )
   }
 }
+export default dmsShare
