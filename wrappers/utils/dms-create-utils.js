@@ -68,7 +68,11 @@ export class DmsCreateStateClass {
       this.setValues = (key, value) => {
         tempValues[key] = value;
       }
-      this.attributes.forEach(att => att.initValue(values[att.key]));
+      this.attributes.forEach(att => {
+        if (att.checkHasValue(values[att.key])) {
+          att.initValue(values[att.key])
+        }
+      });
       setValues(prev => ({ ...prev, ...tempValues }));
       this.setValues = saved;
       this.initialized = initialized;
@@ -88,17 +92,16 @@ export class DmsCreateStateClass {
     //   }
     // }
     this.clearValues = () => {
-      const saved = this.setValues;
-      this.saveValues = {};
-      this.setValues = (key, value) => {};
       this.attributes.forEach(att => {
-        att.initValue(null);
-        att.defaultLoaded = false;
+        att.clearValue();
       });
       setValues({});
-      this.setValues = saved;
-      this.saveValues = {};
       this.initialized = false;
+      this.values = {};
+      this.saveValues = {};
+      this.verified = false;
+      this.hasValues = false;
+      this.defaultsLoaded = false;
       window.localStorage.removeItem(makeStorageId(format));
     };
     this.cleanup = () => {
@@ -166,6 +169,7 @@ class Attribute {
       setValues(this.key, value);
     }
 
+
     // this.msgIds = {};
     this.hasWarning = false;
     // this.setWarning = (type, warning) => {
@@ -193,6 +197,14 @@ class Attribute {
     this.onSave = () => {
 
     }
+  }
+  clearValue() {
+      this.value = this.isArray ? [] : null;
+      this.hasValue = false;
+      this.verified = !this.required;
+
+      this.defaultLoaded = false;
+      this.defaultValue = null;
   }
   mapOldToNew = value => value;
 
@@ -254,7 +266,12 @@ class EditorAttribute extends Attribute {
     super(att, setValues, props);
 
     this.hasDefault = false;
+    this.value = this.isArray ? [] : createEditorState(null);
+  }
 
+  clearValue() {
+    super.clearValue();
+    this.hasDefault = false;
     this.value = this.isArray ? [] : createEditorState(null);
   }
   mapOldToNew = value => {
@@ -328,11 +345,18 @@ class DmsAttribute extends Attribute {
 
     this.value = this.isArray ? [] : {};
 
-    this.defaultValue = this.isArray ? [] : this.getDefault(props);
-    this.hasDefault = this.isArray ? false : Boolean(Object.keys(this.defaultValue).length);
+    this.defaultValue = null;//this.isArray ? [] : this.getDefault(props);
+    this.hasDefault = false;//this.isArray ? false : Boolean(Object.keys(this.defaultValue).length);
     this.defaultLoaded = false;
 
     this.required = this.isArray ? this.required : isRequired(this.attributes);
+  }
+  clearValue() {
+    super.clearValue();
+    this.value = this.isArray ? [] : {};
+    this.hasDefault = false;
+    this.defaultValue = null;
+    this.defaultLoaded = false;
   }
   _mapOldToNew = (value, attributes) => {
     return attributes.reduce((a, c) => {
