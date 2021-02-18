@@ -108,9 +108,6 @@ export const useDmsCreateState = (props, mode = "create") => {
     DmsCreateState.defaultsLoaded = true;
 
     DmsCreateState.attributes.forEach(att => {
-if (mode === "create" && att.defaultLoaded) {
-  console.log(att.key, att.value, att.defaultValue)
-}
       DmsCreateState.hasValues = DmsCreateState.hasValues || (
         (att.editable !== false) &&
         att.checkHasValue(values[att.key]) &&
