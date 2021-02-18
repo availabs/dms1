@@ -21,10 +21,12 @@ export const makeStorageId = (format = {}, item = null) =>
   `${ format.app }+${ format.type }${ item ? `:${ item.id }` : `` }`;
 
 export class DmsCreateStateClass {
-  constructor(setValues, format) {
+  constructor(setValues, format, item) {
     this.numSections = 0;
     this.activeSection = null;
     this.activeIndex = -1;
+
+    this.storageId = makeStorageId(format, item);
 
     this.verified = false;
     this.hasWarning = false;
@@ -102,7 +104,7 @@ export class DmsCreateStateClass {
       this.verified = false;
       this.hasValues = false;
       this.defaultsLoaded = false;
-      window.localStorage.removeItem(makeStorageId(format));
+      window.localStorage.removeItem(this.storageId);
     };
     this.cleanup = () => {
       // const msgIds = Object.values(this.msgIds);

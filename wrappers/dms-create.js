@@ -63,8 +63,8 @@ export const useDmsCreateState = (props, mode = "create") => {
 
   const DmsCreateState = React.useMemo(() => {
     setState(InitialState);
-    return new DmsCreateStateClass(setValues, format);
-  }, [format, setValues]);
+    return new DmsCreateStateClass(setValues, format, item);
+  }, [format, item, setValues]);
 
   useEffect(() => {
     return () => {
@@ -159,7 +159,7 @@ export const useDmsCreateState = (props, mode = "create") => {
     then: () => {
       DmsCreateState.onSave();
       DmsCreateState.clearValues();
-      window.localStorage.removeItem(makeStorageId(format, item));
+      window.localStorage.removeItem(DmsCreateState.storageId);
     }
   }
 
@@ -177,8 +177,6 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   ready = ready && _ready;
 
-  const storageId = makeStorageId(format, item);
-
   const [showModal, setShowModal] = useState(false),
     [checked, setChecked] = useState(!Boolean(window.localStorage)),
     onHide = useCallback(() => {
@@ -190,11 +188,11 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
   useEffect(() => {
     if (!ready || checked || showModal) return;
 
-    const data = JSON.parse(window.localStorage.getItem(storageId));
+    const data = JSON.parse(window.localStorage.getItem(DmsCreateState.storageId));
     setShowModal(Boolean(data));
     setChecked(!Boolean(data));
     setData(data);
-  }, [storageId, checked, data, DmsCreateState, format, item, ready, showModal]);
+  }, [checked, data, DmsCreateState, format, item, ready, showModal]);
 
   const loadData = useCallback(() => {
     DmsCreateState.initValues(data);
@@ -203,10 +201,10 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   const { saveValues } = DmsCreateState;
 
-  const saveToLocalStorage = useMemo(() => debounce((storageId, DmsCreateState) => {
+  const saveToLocalStorage = useMemo(() => debounce((DmsCreateState) => {
     const { saveValues } = DmsCreateState;
     if (hasValue(saveValues)) {
-      window.localStorage.setItem(storageId, JSON.stringify(saveValues));
+      window.localStorage.setItem(DmsCreateState.storageId, JSON.stringify(saveValues));
     }
   }, 500), []);
 
@@ -214,13 +212,13 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
     if (!ready || !checked) return;
 
     if (doSave) {
-      saveToLocalStorage(storageId, DmsCreateState);
+      saveToLocalStorage(DmsCreateState);
     }
     else if (!doSave) {
       saveToLocalStorage.cancel();
-      window.localStorage.removeItem(storageId);
+      window.localStorage.removeItem(DmsCreateState.storageId);
     }
-  }, [doSave, storageId, ready, checked, DmsCreateState, saveValues, saveToLocalStorage]);
+  }, [doSave, ready, checked, DmsCreateState, saveValues, saveToLocalStorage]);
 
   return [showModal, onHide, loadData];
 }
@@ -326,7 +324,12 @@ export const dmsEdit = Component => {
     const debounced = React.useMemo(() => {
       return debounce((disabled, itemId, saveValues) => {
         if (!disabled) {
-          interact("api:edit", itemId, saveValues, { loading: false });
+          interact("api:edit", itemId, saveValues, { loading: false })
+            .then(() => {
+              DmsCreateState.onSave();
+              DmsCreateState.clearValues();
+              window.localStorage.removeItem(DmsCreateState.storageId);
+            });
           DmsCreateState.initialized = false;
         }
       }, 50);
