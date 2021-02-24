@@ -5,7 +5,7 @@ import get from "lodash.get"
 import debounce from "lodash.debounce"
 
 import { hasValue, useTheme, AvlModal } from "@availabs/avl-components"
-import { DmsCreateStateClass, makeNewAttribute, makeStorageId } from "./utils/dms-create-utils"
+import { DmsCreateStateClass, makeNewAttribute } from "./utils/dms-create-utils"
 // import { getValue } from "../utils"
 
 export const useSetSections = format => {

@@ -35,20 +35,22 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
         fixed top-0 left-0 right-0 z-50
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
       ` }>
-      <HeaderComponent title={ title || `${ props.app } Manager` }>
-        <div className="flex-0 flex items-center">
-          { !pageMessages.length ? null :
-            <Warning warnings={ pageMessages }/>
-          }
-          { !attributeMessages.length ? null :
-            <Warning warnings={ attributeMessages } type="att"/>
-          }
-          { dmsActions.map(a =>
-              <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
-            )
-          }
-        </div>
-      </HeaderComponent>
+      <div className="container mx-auto">
+        <HeaderComponent title={ title || `${ props.app } Manager` }>
+          <div className="flex-0 flex items-center">
+            { !pageMessages.length ? null :
+              <Warning warnings={ pageMessages }/>
+            }
+            { !attributeMessages.length ? null :
+              <Warning warnings={ attributeMessages } type="att"/>
+            }
+            { dmsActions.map(a =>
+                <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
+              )
+            }
+          </div>
+        </HeaderComponent>
+      </div>
     </div>
   )
 }
