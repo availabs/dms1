@@ -87,9 +87,9 @@ const BadAttributeRow = ({ oldKey, value, attributes, deleteOld, mapOldToNew, ..
     </div>
   )
 }
-export const DmsCreateBase = ({ createState, ...props }) => {
+export const DmsCreateBase = ({ createState, className = null, ...props }) => {
   return (
-    <div>
+    <div className={ className }>
       <DmsWizard { ...createState }>
         <form onSubmit={ e => e.preventDefault() }>
           <div className="mt-2 mb-4 max-w-2xl">
