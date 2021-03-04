@@ -154,13 +154,13 @@ class Attribute {
         break;
     }
 
-    this.value = this.isArray ? [] : null;
+    this.value = this.isArray ? [] : undefined;
     this.hasValue = false;
     this.verified = !this.required;
 
     this.hasDefault = ("default" in att);
     this.defaultLoaded = false;
-    this.defaultValue = null;
+    this.defaultValue = undefined;
 
     this.onChange = (value, doLive = true) => {
       this.value = value;
@@ -201,12 +201,12 @@ class Attribute {
     }
   }
   clearValue() {
-      this.value = this.isArray ? [] : null;
+      this.value = this.isArray ? [] : undefined;
       this.hasValue = false;
       this.verified = !this.required;
 
       this.defaultLoaded = false;
-      this.defaultValue = null;
+      this.defaultValue = undefined;
   }
   mapOldToNew = value => value;
 
@@ -268,13 +268,13 @@ class EditorAttribute extends Attribute {
     super(att, setValues, props);
 
     this.hasDefault = false;
-    this.value = this.isArray ? [] : createEditorState(null);
+    this.value = this.isArray ? [] : createEditorState(undefined);
   }
 
   clearValue() {
     super.clearValue();
     this.hasDefault = false;
-    this.value = this.isArray ? [] : createEditorState(null);
+    this.value = this.isArray ? [] : createEditorState(undefined);
   }
   mapOldToNew = value => {
     if (Array.isArray(value)) {
@@ -343,11 +343,12 @@ class DmsAttribute extends Attribute {
     super(att, setValues, props);
 
     const format = props.registeredFormats[att.format];
+    this.Format = format;
     this.attributes = getAttributes(format, props.registeredFormats);
 
     this.value = this.isArray ? [] : {};
 
-    this.defaultValue = null;//this.isArray ? [] : this.getDefault(props);
+    this.defaultValue = undefined;//this.isArray ? [] : this.getDefault(props);
     this.hasDefault = false;//this.isArray ? false : Boolean(Object.keys(this.defaultValue).length);
     this.defaultLoaded = false;
 
@@ -357,7 +358,7 @@ class DmsAttribute extends Attribute {
     super.clearValue();
     this.value = this.isArray ? [] : {};
     this.hasDefault = false;
-    this.defaultValue = null;
+    this.defaultValue = undefined;
     this.defaultLoaded = false;
   }
   _mapOldToNew = (value, attributes) => {
@@ -458,7 +459,7 @@ class DmsAttribute extends Attribute {
           createEditorState(get(value, c.key));
       }
       else {
-        a[c.key] = get(value, c.key, c.isArray ? [] : null);
+        a[c.key] = get(value, c.key, c.isArray ? [] : undefined);
         // if (c.type === "boolean") {
         //   a[c.key] = Boolean(a[c.key]);
         // }

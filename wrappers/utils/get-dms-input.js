@@ -74,7 +74,7 @@ const AvailableInputs = {
     InputComp: ObjectInput,
     getInputProps: (att, props) => ({}),
     getDisplayComp: (att, props) => null,
-    getEmptyValueFunc: (att, props) => null
+    getEmptyValueFunc: (att, props) => ({})
   },
   boolean: {
     InputComp: BooleanInput,

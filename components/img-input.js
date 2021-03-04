@@ -47,6 +47,7 @@ const ImgInput = ({ height = 500, autoFocus = false, value: propsValue, onChange
         setIndex(0)
       }
     }, [propsValue]);
+console.log("VALUE:", propsValue);
 
   const [img, setImg] = React.useState(null),
     [, setLoaded] = React.useState(false),
