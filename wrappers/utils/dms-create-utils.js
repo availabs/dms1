@@ -21,12 +21,12 @@ export const makeStorageId = (format = {}, item = null) =>
   `${ format.app }+${ format.type }${ item ? `:${ item.id }` : `` }`;
 
 export class DmsCreateStateClass {
-  constructor(setValues, format, item) {
+  constructor(setValues, format) {
     this.numSections = 0;
     this.activeSection = null;
     this.activeIndex = -1;
 
-    this.storageId = makeStorageId(format, item);
+    this.data = {};
 
     this.verified = false;
     this.hasWarning = false;

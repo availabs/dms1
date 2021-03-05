@@ -5,7 +5,7 @@ import get from "lodash.get"
 import debounce from "lodash.debounce"
 
 import { hasValue, useTheme, AvlModal } from "@availabs/avl-components"
-import { DmsCreateStateClass, makeNewAttribute } from "./utils/dms-create-utils"
+import { DmsCreateStateClass, makeNewAttribute, makeStorageId } from "./utils/dms-create-utils"
 // import { getValue } from "../utils"
 
 export const useSetSections = format => {
@@ -63,8 +63,9 @@ export const useDmsCreateState = (props, mode = "create") => {
 
   const DmsCreateState = React.useMemo(() => {
     setState(InitialState);
-    return new DmsCreateStateClass(setValues, format, item);
-  }, [format, item, setValues]);
+    const newDmsCreateState = new DmsCreateStateClass(setValues, format);
+    return newDmsCreateState;
+  }, [format, setValues]);
 
   useEffect(() => {
     return () => {
@@ -74,7 +75,6 @@ export const useDmsCreateState = (props, mode = "create") => {
 
   useEffect(() => {
     if (!Sections.length && sections.length) {
-
       let firstUnhidden = Infinity;
 
       const Sections = sections
@@ -94,6 +94,11 @@ export const useDmsCreateState = (props, mode = "create") => {
       DmsCreateState.sections = Sections;
       DmsCreateState.numSections = Sections.length;
       DmsCreateState.attributes = Sections.reduce((a, c) => a.concat(c.attributes), []);
+
+      // if (hasValue(DmsCreateState.data)) {
+      //   DmsCreateState.initialized = false;
+      //   DmsCreateState.initValues(DmsCreateState.data);
+      // }
 
       setState(prev => ({ ...prev, Sections, section: firstUnhidden }));
     };
@@ -151,6 +156,8 @@ export const useDmsCreateState = (props, mode = "create") => {
     };
   }
 
+  DmsCreateState.storageId = makeStorageId(format, item);
+
   DmsCreateState.dmsAction = {
     action: "api:create",
     label: dmsAction,
@@ -158,8 +165,8 @@ export const useDmsCreateState = (props, mode = "create") => {
     disabled: !DmsCreateState.verified,
     then: () => {
       DmsCreateState.onSave();
-      DmsCreateState.clearValues();
-      window.localStorage.removeItem(DmsCreateState.storageId);
+      DmsCreateState.clearValues(makeStorageId(format, item));
+      window.localStorage.removeItem();
     }
   }
 
@@ -325,15 +332,14 @@ export const dmsEdit = Component => {
       return debounce((disabled, itemId, saveValues) => {
         if (!disabled) {
           interact("api:edit", itemId, saveValues, { loading: false })
-            .then(() => {
-              DmsCreateState.onSave();
-              DmsCreateState.clearValues();
-              window.localStorage.removeItem(DmsCreateState.storageId);
-            });
-          DmsCreateState.initialized = false;
+          //   .then(() => {
+          //     DmsCreateState.onSave();
+          //     DmsCreateState.clearValues();
+          //   });
+          // DmsCreateState.initialized = false;
         }
       }, 50);
-    }, [interact, DmsCreateState]);
+    }, [interact]);
 
     React.useEffect(() => {
       if (!item) return;
@@ -376,7 +382,7 @@ export const dmsEdit = Component => {
     return (
       <>
         { (!DmsCreateState.activeSection || !DmsCreateState.hasValues) ? null :
-          <Component { ...props } createState={ DmsCreateState }/>
+          <Component key={ item.id } { ...props } createState={ DmsCreateState }/>
         }
         <LoadModal show={ show }
           onHide={ onHide }
