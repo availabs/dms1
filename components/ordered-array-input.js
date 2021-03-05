@@ -103,13 +103,15 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
             autoFocus={ autoFocus }
             onKeyDown={ onKeyDown }
             disabled ={ disabled }
+            save={addToArray}
             placeholder={ `Type a value...`}>
 
+            {get(Input.settings, 'hasControls', false) ? '' :
             <Button onClick={ addToArray }
               buttonTheme="buttonSuccess"
               disabled={ buttonDisabled }>
               create
-            </Button>
+            </Button>}
           </EditComponent>
         </div>
       </div>
@@ -124,9 +126,7 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
               autoFocus={ autoFocus }
               onKeyDown={ onKeyDown }
               disabled ={ disabled }
-
               move={ m => move(i, m) }
-
               addToArray={ addToArray }
               placeholder={ `Type a value...`}>
 

@@ -169,6 +169,7 @@ export const getInput = (att, props, disabled) => {
     getEmptyValueFunc
   } = getInputData(type);
 
+  
   let inputProps = getInputProps(att, props),
     DisplayComp = getDisplayComp(att, props),
     getEmptyValue = getEmptyValueFunc(att, props);
@@ -229,8 +230,15 @@ export const getInput = (att, props, disabled) => {
         /> )
     ))
   }
-  return React.forwardRef((props, ref) => (
-    <InputComp id={ att.id } { ...inputProps } { ...props } ref={ ref }
-      disabled={ disabled || (att.editable === false) }/>
-  ))
+  
+
+  return React.forwardRef((props, ref) => {
+    if(props.EditComp) {
+      InputComp = props.EditComp
+    }
+    return (
+      <InputComp id={ att.id } { ...inputProps } { ...props } ref={ ref }
+        disabled={ disabled || (att.editable === false) }/>
+      )
+  })
 }
