@@ -139,6 +139,7 @@ class MyEditor extends React.Component {
     setTimeout(() => { this.editor && this.editor.focus(); }, 25);
   }
   handleChange(editorState) {
+    this.setState({editorState:editorState})
     this.props.onChange(editorState);
   }
   handleDroppedFiles(selection, files, { getEditorState }) {
@@ -178,7 +179,7 @@ class MyEditor extends React.Component {
         <div className="px-2 pb-2 flow-root">
           <Editor ref={ n => this.editor = n }
             placeholder={ this.props.placeholder }
-            editorState={ this.props.value }
+            editorState={ this.state.editorState || this.props.value }
             onChange={ this.handleChange }
             plugins={ plugins }
             readOnly={ this.props.disabled }
