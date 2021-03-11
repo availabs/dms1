@@ -165,8 +165,8 @@ export const useDmsCreateState = (props, mode = "create") => {
     disabled: !DmsCreateState.verified,
     then: () => {
       DmsCreateState.onSave();
-      DmsCreateState.clearValues(makeStorageId(format, item));
-      window.localStorage.removeItem();
+      DmsCreateState.clearValues();
+      window.localStorage.removeItem(DmsCreateState.storageId);
     }
   }
 
