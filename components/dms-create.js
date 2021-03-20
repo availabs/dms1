@@ -8,16 +8,14 @@ import { dmsCreate, dmsEdit } from "../wrappers/dms-create"
 import DmsWizard from "./dms-wizard"
 
 export const SectionInputs = ({ createState }) => {
-
   const theme = useTheme();
-
   return (
     <div className="w-full flex flex-col justify-center">
       { createState.activeSection.attributes
           .map(({ Input, key, ...att }, i) => (
             <div key={ key }
               className={ `border-l-4 pl-2 mb-2 pb-1
-                ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-2xl"}
+                ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-3xl"}
                 ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
                     att.hasValue ? theme.borderInfo : theme.borderLight }
                 ${ att.hidden ? 'hidden' : '' }
