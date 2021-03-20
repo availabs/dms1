@@ -14,7 +14,7 @@ const Title = ({ title }) => {
   )
 }
 
-const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
+const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, userMenu = false, ...props }) => {
   const { stack, top, item } = useDms(),
     { pageMessages, attributeMessages } = useMessenger();
 
@@ -43,7 +43,10 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
         fixed top-0 left-0 right-0 z-50 ${ theme.menuBg }
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
       ` }>
-      <HeaderComponent title={ <Title title={ title || `${ props.app } Manager` }/> }>
+      <HeaderComponent userMenu={ userMenu }
+        title={
+          <Title title={ title || `${ props.app } Manager` }/>
+        }>
         <div className="flex-0 flex items-center">
           { !pageMessages.length ? null :
             <Warning warnings={ pageMessages }/>
