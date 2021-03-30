@@ -71,7 +71,7 @@ export class DmsCreateStateClass {
         tempValues[key] = value;
       }
       this.attributes.forEach(att => {
-        if (att.checkHasValue(values[att.key])) {
+        if (att.checkHasValue(values[att.key], true)) {
           att.initValue(values[att.key])
         }
       });
@@ -168,7 +168,7 @@ class Attribute {
       this.verified = this.verifyValue(value);
       // this.sendWarnings(value);
       this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
-      setValues(this.key, value);
+      setValues(this.key, value, doLive);
     }
 
 
@@ -201,12 +201,12 @@ class Attribute {
     }
   }
   clearValue() {
-      this.value = this.isArray ? [] : undefined;
-      this.hasValue = false;
-      this.verified = !this.required;
+    this.value = this.isArray ? [] : undefined;
+    this.hasValue = false;
+    this.verified = !this.required;
 
-      this.defaultLoaded = false;
-      this.defaultValue = undefined;
+    this.defaultLoaded = false;
+    this.defaultValue = undefined;
   }
   mapOldToNew = value => value;
 
@@ -297,11 +297,21 @@ class EditorAttribute extends Attribute {
       this.onChange(createEditorState(value), false);
     }
   }
-  checkHasValue = value => {
-    if (Array.isArray(value)) {
-      return value && value.reduce((a, c) => a || checkEditorValue(c), false);
+  checkHasValue = (value, isRaw = false) => {
+    let valueToCheck = value;
+    if (isRaw) {
+      if (Array.isArray(value)) {
+        valueToCheck = value.map(createEditorState);
+      }
+      else {
+        valueToCheck = createEditorState(value);
+      }
     }
-    return checkEditorValue(value);
+
+    if (Array.isArray(valueToCheck)) {
+      return valueToCheck.reduce((a, c) => a || checkEditorValue(c), false);
+    }
+    return checkEditorValue(valueToCheck);
   }
   verifyValue = value => {
     return !this.required || this.checkHasValue(value);
@@ -474,8 +484,8 @@ class DmsAttribute extends Attribute {
       false
     );
   }
-  checkHasValue = (value, attributes = this.attributes) => {
-    return checkDmsValue(value, attributes);
+  checkHasValue = (value, isRaw = false, attributes = this.attributes) => {
+    return checkDmsValue(value, attributes, isRaw);
   }
   // cleanup = () => {
   //
@@ -536,12 +546,151 @@ class DmsAttribute extends Attribute {
     return verifyDmsValue(value, attributes, this.required);
   }
 }
+
+export const getTypeAttributes = (attributes, formats) => {
+  const Attributes = [];
+  attributes.forEach(att => {
+    const Att = Object.assign({}, att);
+    Att.name = att.name || prettyKey(att.key);
+    if (Att.type === "dms-format") {
+      Att.attributes = getAttributes(formats[Att.format], formats);
+    }
+    Attributes.push(Att);
+  })
+  return Attributes;
+}
+
+class TypeSelectAttribute extends Attribute {
+  constructor(att, setValues, props, mode) {
+    super(att, setValues, props, mode);
+
+    this.isArray = false;
+
+    this.Attributes = getTypeAttributes(att.attributes, props.registeredFormats);
+
+    this.SelectedAttribute = null;
+
+    this.value = this.isArray ? [] : { attribute: undefined, value: undefined };
+    this.hasValue = false;
+    this.verified = !this.required;
+
+    this.hasDefault = false;//("default" in att);
+    this.defaultLoaded = false;
+    this.defaultValue = undefined;
+
+    this.onAttributeChange = (key, value, doLive = true) => {
+      this.value = { ...this.value, value };
+      this.hasValue = this.SelectedAttribute.checkHasValue(value);
+      this.verified = this.SelectedAttribute.verifyValue(value);
+      this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
+      setValues(this.key, this.value);
+    }
+
+    this.onChange = (newValue, doLive = true) => {
+      newValue = newValue || {};
+      const { attribute, value } = newValue;
+      if (attribute !== get(this, ["value", "attribute"])) {
+        this.SelectedAttribute = null;
+        if (attribute) {
+          const Attribute = this.Attributes.reduce((a, c) => c.key === attribute ? c : a, null);
+          this.SelectedAttribute = makeNewAttribute(Attribute, this.onAttributeChange, props, mode);
+        }
+      }
+      this.value = { attribute, value };
+
+      if (attribute) {
+        this.SelectedAttribute.initValue(value);
+      }
+      else {
+        this.value = value;
+        this.hasValue = false;
+        this.verified = !this.required;
+        this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
+        setValues(this.key, value);
+      }
+    }
+
+    this.mapOldToNew = oldValue => {
+      if (typeof oldValue !== "object") return undefined;
+
+      let { attribute, value } = oldValue || {};
+
+      const initValue = (key, newValue) => {
+        value = newValue;
+      }
+
+      let SelectedAttribute = null;
+      const Attribute = this.Attributes.reduce((a, c) => c.key === attribute ? c : a, null);
+      if (Attribute) {
+        SelectedAttribute = makeNewAttribute(Attribute, initValue, props, mode);
+      }
+      if (value) {
+        SelectedAttribute.initValue(value);
+      }
+      return { attribute, value };
+    };
+
+    this.hasWarning = false;
+    this.cleanup = () => {
+
+    }
+    this.onSave = () => {
+
+    }
+  }
+  clearValue() {
+    this.value = this.isArray ? [] : { attribute: undefined, value: undefined };
+    this.hasValue = false;
+    this.verified = !this.required;
+
+    this.defaultLoaded = false;
+    this.defaultValue = undefined;
+  }
+
+  getDefault = props => {
+    this.defaultValue = undefined;//getValue(this.default, { props });
+    this.defaultLoaded = false;//this.checkHasValue(this.defaultValue);
+    return this.defaultValue;
+  }
+
+  getValue = fromValue => {
+    const { attribute, value } = fromValue;
+    return {
+      attribute,
+      value: this.SelectedAttribute.getValue(value)
+    }
+  };
+
+  checkHasValue = (checkValue, isRaw = false) => {
+    const { value } = checkValue || {};
+    if (this.SelectedAttribute) {
+      return this.SelectedAttribute.checkHasValue(value, isRaw);
+    }
+    else {
+      return hasValue(value);
+    }
+  }
+  verifyValue = verifyValue => {
+    const { value } = verifyValue;
+    if (this.SelectedAttribute) {
+      return this.SelectedAttribute.verifyValue(value);
+    }
+    return !this.required;
+  }
+  initValue = value => {
+    this.onChange(value);
+  }
+}
+
 export const makeNewAttribute = (att, setValues, props, mode) => {
   if (att.type === "dms-format") {
     return new DmsAttribute(att, setValues, props, mode);
   }
   else if (att.type === "richtext") {
     return new EditorAttribute(att, setValues, props, mode);
+  }
+  else if (att.type === "type-select") {
+    return new TypeSelectAttribute(att, setValues, props, mode);
   }
   return new Attribute(att, setValues, props, mode);
 }

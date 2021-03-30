@@ -5,20 +5,21 @@ import { useTheme } from "@availabs/avl-components"
 const DmsCard = ({ title, body, footer, children }) => {
   const theme = useTheme();
   return (
-    <div>
+    <div className="grid grid-cols-1 gap-y-4">
       { !title ? null :
-        <div className={ `${ theme.contentBg } rounded px-4 py-2 mb-3 shadow text-3xl font-bold` }>
+        <div className={ `text-3xl font-bold` }>
           { title }
+          <div className="border-2 rounded"/>
         </div>
       }
       { !body ? null :
-        <div className={ `${ theme.contentBg } rounded px-8 py-4 mb-3 shadow` }>
+        <div className={ `${ theme.accent1 } rounded px-8 py-4 shadow-lg` }>
           { body }
         </div>
       }
       { children }
       { !footer ? null :
-        <div className={ `rounded py-2 px-4 ${ theme.contentBg } shadow` }>{ footer }</div>
+        <div className={ `rounded py-2 px-4 ${ theme.accent1 } shadow-lg` }>{ footer }</div>
       }
     </div>
   )

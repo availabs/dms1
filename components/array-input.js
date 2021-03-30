@@ -11,7 +11,7 @@ const DefaultDisplay = ({ value }) => {
     case "object":
       return JSON.stringify(value, null, 3);
     default:
-      return value.toString();
+      return `${ value }`;
   }
 };
 const defaultGetEmptyValue = () => null;

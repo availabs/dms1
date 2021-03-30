@@ -15,7 +15,7 @@ export const SectionInputs = ({ createState }) => {
           .map(({ Input, key, ...att }, i) => (
             <div key={ key }
               className={ `border-l-4 pl-2 mb-2 pb-1
-                ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-3xl"}
+                ${ att.fullWidth || (att.type === "richtext") || (att.type === "img") ? "w-full" : "max-w-4xl"} 
                 ${ !att.verified ? theme.borderDanger : att.required ? theme.borderSuccess :
                     att.hasValue ? theme.borderInfo : theme.borderLight }
                 ${ att.hidden ? 'hidden' : '' }

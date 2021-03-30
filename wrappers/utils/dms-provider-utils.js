@@ -29,6 +29,8 @@ const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
 }
 
 export const processFormat = (format, formats = {}) => {
+  if (!format) return formats;
+
   const Format = clonedeep(format);
 
   if (Format.registerFormats) {

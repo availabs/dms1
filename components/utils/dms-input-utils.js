@@ -46,7 +46,7 @@ class Attribute {
 class EditorAttribute extends Attribute {
   checkHasValue = value => {
     if (Array.isArray(value)) {
-      return hasValue(value) && value.reduce((a, c) => a || checkEditorValue(c), false);
+      return value.reduce((a, c) => a || checkEditorValue(c), false);
     }
     return checkEditorValue(value);
   }

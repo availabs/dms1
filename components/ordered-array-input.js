@@ -1,8 +1,7 @@
 import React from "react"
-import get from 'lodash.get'
 
 import {
-  Button, useSetRefs,
+  Button,
   verifyValue as utilityVerify,
   hasValue as defaultHasValue
 } from "@availabs/avl-components"
@@ -18,45 +17,50 @@ const DefaultDisplay = ({ value }) => {
 const defaultGetEmptyValue = () => null;
 
 const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, autoFocus,
-  DisplayComp = DefaultDisplay, inputProps, type, verify,
+  DisplayComp = DefaultDisplay, inputProps, type, verify, showControls,
   verifyValue = utilityVerify, hasValue = defaultHasValue,
   getEmptyValue = defaultGetEmptyValue, ...props }, ref) => {
 
   value = value || [];
 
-  const [node, setNode] = React.useState(null),
-    [newItem, setNewItem] = React.useState(getEmptyValue),
+  const [newItem, setNewItem] = React.useState(getEmptyValue),
     [editIndex, setEditIndex] = React.useState(null),
-    [openEditor, setOpenEditor] = React.useState(false),
+    [openCreate, setOpenCreate] = React.useState(false),
 
     addToArray = React.useCallback(e => {
-      const newValue = editIndex === null ?
-        [...value, newItem] :
-        Object.assign([], value, {[editIndex]: newItem});
+      const newValue = [...value];
+      if (editIndex === null){
+        newValue.push(newItem);
+      }
+      else {
+        newValue[editIndex] = newItem;
+      }
 
       onChange(newValue);
       setNewItem(getEmptyValue());
       setEditIndex(null);
-      setOpenEditor(false);
-      node && node.focus();
-    }, [value, newItem, node, onChange, getEmptyValue, editIndex]),
+      setOpenCreate(false);
+    }, [value, newItem, onChange, getEmptyValue, editIndex]),
 
     removeFromArray = React.useCallback(v => {
       onChange(value.filter(vv => vv !== v));
     }, [value, onChange]),
 
     createNewItem = React.useCallback(e => {
-      setOpenEditor(!openEditor);
+      setOpenCreate(!openCreate);
       setEditIndex(null);
       setNewItem(getEmptyValue());
-    }, [openEditor,getEmptyValue]),
+    }, [openCreate, getEmptyValue]),
 
-    editItem = React.useCallback((v,i) => {
+    editItem = React.useCallback((v, i) => {
       setEditIndex(i);
       setNewItem(v);
-      setOpenEditor(false);
-      node && node.focus();
-    }, [node]),
+      setOpenCreate(false);
+    }, []),
+    cancelEdit = React.useCallback(() => {
+      setEditIndex(null);
+      setNewItem(getEmptyValue());
+    }, [getEmptyValue]),
 
     buttonDisabled = React.useMemo(() =>
       disabled ||
@@ -89,73 +93,124 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
           <Button
             className={'p-2'}
             onClick={ createNewItem }
-            buttonTheme={ openEditor ? "buttonDanger" : "buttonSuccess" }>
-            { openEditor ? 'cancel' : <div>create new</div> }
+            buttonTheme={ openCreate ? "buttonDanger" : "buttonSuccess" }>
+            { openCreate ? 'cancel' : 'create new' }
           </Button>
         </div>
-        <div style={ { display: openEditor ? "block" : "none" } }>
-          <EditComponent
-            Input={ Input }
-            { ...props } { ...inputProps }
-            ref={ useSetRefs(ref, setNode) }
-            value={ newItem }
-            onChange={ setNewItem }
-            autoFocus={ autoFocus }
-            onKeyDown={ onKeyDown }
-            disabled ={ disabled }
-            save={addToArray}
-            placeholder={ `Type a value...`}>
 
-            {get(Input.settings, 'hasControls', false) ? '' :
-            <Button onClick={ addToArray }
-              buttonTheme="buttonSuccess"
-              disabled={ buttonDisabled }>
-              create
-            </Button>}
-          </EditComponent>
-        </div>
+        { !openCreate ? null :
+          <div>
+            <EditComponent autoFocus
+              Input={ Input }
+              { ...props } { ...inputProps }
+              ref={ ref }
+              value={ newItem }
+              onChange={ setNewItem }
+              onKeyDown={ onKeyDown }
+              disabled={ disabled }
+              controls={ showControls ? {} :
+                { addToArray,
+                  save: addToArray,
+                  create: addToArray,
+                }
+              }
+              placeholder={ `Type a value...` }>
+
+              { !showControls ? null :
+                <div className="flex">
+                  <div className="flex-1">
+                    <Button onClick={ addToArray }
+                      buttonTheme="buttonSuccess"
+                      disabled={ buttonDisabled }>
+                      save
+                    </Button>
+                  </div>
+                  <div className="flex-0">
+                    <Button onClick={ createNewItem }
+                      buttonTheme="buttonDanger">
+                      cancel
+                    </Button>
+                  </div>
+                </div>
+              }
+            </EditComponent>
+          </div>
+        }
       </div>
       { !value.length ? null :
         value.map((v, i) =>
-          editIndex === i ?
-            <EditComponent
-              Input={ Input }
-              { ...props } { ...inputProps }
-              value={ newItem }
-              onChange={ setNewItem }
-              autoFocus={ autoFocus }
-              onKeyDown={ onKeyDown }
-              disabled ={ disabled }
-              move={ m => move(i, m) }
-              addToArray={ addToArray }
-              placeholder={ `Type a value...`}>
+          editIndex === i ? (
+            <React.Fragment key={ i }>
+              <div className="my-2 border"/>
+              <EditComponent
+                Input={ Input }
+                { ...props } { ...inputProps }
+                value={ newItem } autoFocus
+                onChange={ setNewItem }
+                onKeyDown={ onKeyDown }
+                disabled={ disabled }
+                controls={
+                  showControls ? {} :
+                  { addToArray,
+                    save: addToArray,
+                    edit: addToArray,
+                    moveUp: e => move(i, 1),
+                    canMoveUp: i > 0,
+                    moveDown: e => move(i, -1),
+                    canMoveDown: i < (value.length - 1)
+                  }
+                }
+                placeholder={ `Type a value...`}>
 
-              {get(Input.settings, 'hasControls', false) ? '' :
-                <Button onClick={ addToArray }
-                buttonTheme="buttonSuccess"
-                disabled={ buttonDisabled }>
-                Save
-              </Button>}
-            </EditComponent>
-          :
-            get(Input.settings, 'hasControls', false) ?
-              <DisplayComp
-                  value={ v }
-                  edit={ e => editItem(v,i) }
-                  remove={ e => removeFromArray(v) }
-                  moveUp={ i > 0 ? e => move(i,-1) : null }
-                  moveDown={ i < value.length-1 ? e => move(i,1) : null }
-                /> :
-              <div className='w-full'>
-                <ValueItem
-                  edit={ e => editItem(v, i) }
-                  remove={ e => removeFromArray(v) }
-                  move={ m => move(i, m) }
-                  index={ i }
-                  length={ value.length }>
-                    <DisplayComp value={ v } />
-                </ValueItem>
-              </div>
+                { !showControls ? null :
+                  <div className="flex">
+                    <div className="flex-1">
+                      <Button onClick={ addToArray }
+                        buttonTheme="buttonSuccess"
+                        disabled={ buttonDisabled }>
+                        save
+                      </Button>
+                    </div>
+                    <div className="flex-0">
+                      <Button onClick={ cancelEdit }
+                        buttonTheme="buttonDanger">
+                        cancel
+                      </Button>
+                    </div>
+                  </div>
+                }
+              </EditComponent>
+            </React.Fragment>
+          ) : (
+            <React.Fragment key={ i }>
+              <div className="my-2 border"/>
+              { !showControls ? (
+                  <DisplayComp
+                    value={ v }
+                    edit={ e => editItem(v, i) }
+                    remove={ e => removeFromArray(v) }
+                    moveUp={ e => move(i, 1) }
+                    canMoveUp={ i > 0 }
+                    moveDown={ e => move(i, -1) }
+                    canMoveDown={ i < (value.length - 1) }/>
+                ) : (
+                  <div className='w-full'>
+                    <ValueItem
+                      edit={ e => editItem(v, i) }
+                      remove={ e => removeFromArray(v) }
+                      moveUp={ e => move(i, 1) }
+                      canMoveUp={ i > 0 }
+                      moveDown={ e => move(i, -1) }
+                      canMoveDown={ i < (value.length - 1) }>
+
+                      <DisplayComp value={ v } />
+
+                    </ValueItem>
+                  </div>
+                )
+              }
+            </React.Fragment>
+          )
         )
       }
     </div>
@@ -163,43 +218,41 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
 })
 export default OrderedArrayInput;
 
-const ValueItem = ({ edit, remove, move, index, length, children }) =>
-  <div>
-    <div className="flex">
-      <div className="flex-0 flex flex-col mr-1">
-        <Button small className="h-8 mb-1"
-          disabled={ index - 1 < 0 }
-          onClick={ e => move(-1) }>
-          <span className="fa fa-arrow-up"/>
+const ValueItem = ({ edit, remove, moveUp, canMoveUp, moveDown, canMoveDown, children }) =>
+  <div className="flex">
+    <div className="flex-0 flex flex-col mr-1">
+      <Button small className="h-8 mb-1"
+        disabled={ !canMoveUp }
+        onClick={ moveUp }>
+        <span className="fa fa-arrow-up"/>
+      </Button>
+      <Button small className="h-8"
+        disabled={ !canMoveDown }
+        onClick={ moveDown }>
+        <span className="fa fa-arrow-down"/>
+      </Button>
+    </div>
+    <div className="flex-1 flex flex-col">
+      <div className="flex items-start">
+        <Button onClick={ edit }
+          buttonTheme="buttonPrimarySmall">
+          edit
         </Button>
-        <Button small className="h-8"
-          disabled={ index + 1 >= length }
-          onClick={ e => move(1) }>
-          <span className="fa fa-arrow-down"/>
+        <Button className="ml-1" onClick={ remove }
+          buttonTheme="buttonDangerSmall">
+          remove
         </Button>
       </div>
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-start">
-          <Button onClick={ edit }
-            buttonTheme="buttonPrimarySmall">
-            edit
-          </Button>
-          <Button className="ml-1" onClick={ remove }
-            buttonTheme="buttonDangerSmall">
-            remove
-          </Button>
-        </div>
-        <div className="ml-2">
-          { children }
-        </div>
+      <div className="ml-2">
+        { children }
       </div>
     </div>
   </div>
 
-const EditComponent = React.forwardRef(({ Input, children, ...props }, ref) =>
+const EditComponent = React.forwardRef(({ Input, children, controls = {}, ...props }, ref) =>
   <div>
     <div className="my-2">
-      <Input { ...props } ref={ ref }/>
+      <Input { ...props } ref={ ref } { ...controls }/>
     </div>
     { children }
   </div>
