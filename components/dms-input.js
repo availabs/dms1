@@ -16,7 +16,7 @@ const DmsInput = React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, 
   const Props = { ...props, ...useDms(), user: useAuth().user };
 
   const sections = useSetSections(Attribute.Format),
-    Sections = useDmsSections(sections, value, onChange, Props);
+    Sections = useDmsSections(sections, value, onChange, Props, Attribute.mode);
 
   const [hasFocus, setFocus] = React.useState(autoFocus),
     [prev, setPrev] = React.useState(hasFocus),

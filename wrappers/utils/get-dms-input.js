@@ -128,7 +128,12 @@ const AvailableInputs = {
         ...inputProps
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -139,7 +144,12 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", ColorDisplayComp);
     },
@@ -150,7 +160,12 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -166,7 +181,12 @@ const AvailableInputs = {
         multi: get(inputProps, "multi", Boolean(att.isArray))
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => undefined,
     getEmptyValueFunc: (att, props) => undefined
   },
@@ -175,7 +195,12 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -186,7 +211,12 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", getBooleanDisplay(att));
     },
@@ -197,7 +227,12 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", MarkdownViewer);
     },
@@ -212,7 +247,12 @@ const AvailableInputs = {
         imgUploadUrl: imgUploadUrl || get(props, "imgUploadUrl")
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", EditorDisplayComp);
     },
@@ -227,7 +267,12 @@ const AvailableInputs = {
         imgUploadUrl: imgUploadUrl || get(props, "imgUploadUrl")
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", ImgDisplayComp);
     },
@@ -242,7 +287,12 @@ const AvailableInputs = {
         Attribute: att
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => {
+      return {
+        showControls: true,
+        ...get(att, "arrayProps", {})
+      }
+    },
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", getDmsDisplayComp(att));
     },

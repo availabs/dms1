@@ -6,6 +6,7 @@ import { isRequired, getAttributes } from "../../wrappers/utils/dms-create-utils
 
 import { useDms } from "../../contexts/dms-context"
 
+import { TypeSelectAttribute } from "../../wrappers/utils/dms-create-utils"
 import { getInput } from "../../wrappers/utils/get-dms-input"
 
 import {
@@ -71,17 +72,21 @@ class DmsAttribute extends Attribute {
   }
 }
 
-const makeNewAttribute = (att, formats, props) => {
+const makeNewAttribute = (att, formats, setValues, props, mode) => {
+console.log("makeNewAttribute ATT:",att)
   if (att.type === "dms-format") {
     return new DmsAttribute(att, formats, props);
   }
   else if (att.type === "richtext") {
     return new EditorAttribute(att, props);
   }
+  else if (att.type === "type-select") {
+    return new TypeSelectAttribute(att, setValues, props, mode);
+  }
   return new Attribute(att, props);
 }
 
-export const useDmsSections = (sections, value, onChange, props) => {
+export const useDmsSections = (sections, value, onChange, props, mode) => {
 
   const { registeredFormats } = useDms();
 
@@ -99,7 +104,7 @@ export const useDmsSections = (sections, value, onChange, props) => {
           title,
           isActive: false,
           verified: false,
-          attributes: attributes.map(att => makeNewAttribute(att, registeredFormats, props))
+          attributes: attributes.map(att => makeNewAttribute(att, registeredFormats, setValues, props, mode))
         }
         return section;
       })
@@ -110,8 +115,10 @@ export const useDmsSections = (sections, value, onChange, props) => {
   return React.useMemo(() => {
     Sections.forEach(section => {
       section.attributes.forEach(att => {
-        att.onChange = v => {
-          setValues(att.key, v);
+        if (att.type !== "type-select") {
+          att.onChange = v => {
+            setValues(att.key, v);
+          }
         }
       })
     })

@@ -136,6 +136,8 @@ class Attribute {
   constructor(att, setValues, props, mode) {
     Object.assign(this, att);
 
+    this.mode = mode;
+
     this.name = this.name || prettyKey(this.key);
     this.Input = getInput(this, props);
 
@@ -264,8 +266,8 @@ class Attribute {
 }
 
 class EditorAttribute extends Attribute {
-  constructor(att, setValues, props) {
-    super(att, setValues, props);
+  constructor(att, setValues, props, mode) {
+    super(att, setValues, props, mode);
 
     this.hasDefault = false;
     this.value = this.isArray ? [] : createEditorState(undefined);
@@ -349,8 +351,8 @@ const checkDmsDefault = defaults =>
   }, true)
 
 class DmsAttribute extends Attribute {
-  constructor(att, setValues, props) {
-    super(att, setValues, props);
+  constructor(att, setValues, props, mode) {
+    super(att, setValues, props, mode);
 
     const format = props.registeredFormats[att.format];
     this.Format = format;
@@ -560,7 +562,7 @@ export const getTypeAttributes = (attributes, formats) => {
   return Attributes;
 }
 
-class TypeSelectAttribute extends Attribute {
+export class TypeSelectAttribute extends Attribute {
   constructor(att, setValues, props, mode) {
     super(att, setValues, props, mode);
 
