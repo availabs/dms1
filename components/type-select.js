@@ -7,11 +7,24 @@ import { Select, useTheme } from "@availabs/avl-components"
 const TypeSelect = ({ Attribute, onChange, value }) => {
   value = value || {};
 
-  const handleChange = React.useCallback(v => {
-    onChange({ attribute: v });
-  }, [onChange]);
+  const handleTypeChange = React.useCallback(key => {
+    const att = Attribute.Attributes.reduce((a, c) => c.key === key ? c : a, {});
+    onChange({ key: att.key, name: att.name, type: att.type, value: undefined });
+  }, [Attribute, onChange]);
 
-  const Selected = get(Attribute, "SelectedAttribute", null);
+  const handleValueChange = React.useCallback((k, v) => {
+    onChange({ ...value, value: v });
+  }, [onChange, value]);
+
+  const Selected = Attribute.Attributes.reduce((a, c) => {
+    return c.key === value.key ? c : a;
+  }, null);
+
+  if (Selected) {
+    Selected.setValues = handleValueChange;
+  }
+
+console.log("<type-select> Selected:", Selected, value);
 
   const theme = useTheme();
 
@@ -19,12 +32,12 @@ const TypeSelect = ({ Attribute, onChange, value }) => {
     <div>
 
       <Select options={ get(Attribute, "Attributes", []) }
-        value={ value.attribute }
-        onChange={ handleChange }
+        value={ value.key }
+        valueAccessor={ att => att.key }
+        onChange={ handleTypeChange }
         multi={ false }
         searchable={ false }
-        accessor={ v => `${ v.name } (${ v.type })` }
-        valueAccessor={ v => v.key }/>
+        accessor={ att => `${ att.name } (${ att.type })` }/>
 
       { !Selected ? null :
         <div className={ `border-l-4 pl-2 my-2 pb-1
@@ -35,7 +48,7 @@ const TypeSelect = ({ Attribute, onChange, value }) => {
           ` }>
           <label htmlFor={ Selected.id }>{ Selected.name }</label>
           <Selected.Input autoFocus
-            value={ Selected.value } onChange={ Selected.onChange }/>
+            value={ value.value } onChange={ Selected.onChange }/>
         </div>
       }
 

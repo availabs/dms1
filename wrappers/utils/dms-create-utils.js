@@ -3,7 +3,7 @@ import {
   convertToRaw
 } from "../../components/editor"
 
-import { getInput } from "./get-dms-input"
+import { getInput, getInputData } from "./get-dms-input"
 
 import get from "lodash.get"
 
@@ -80,19 +80,6 @@ export class DmsCreateStateClass {
       this.initialized = initialized;
     }
 
-    // this.msgIds = {};
-    // this.setWarning = (type, warning) => {
-    //   if (warning && !(type in this.msgIds)) {
-    //     const msgId = dmsMsg.newMsgId();
-    //     this.msgIds[type] = msgId;
-    //     dmsMsg.sendPageMessage({ msg: warning, id: msgId });
-    //   }
-    //   else if (!warning && (type in this.msgIds)) {
-    //     const msgId = this.msgIds[type];
-    //     dmsMsg.removePageMessage([msgId]);
-    //     delete this.msgIds[type];
-    //   }
-    // }
     this.clearValues = () => {
       this.attributes.forEach(att => {
         att.clearValue();
@@ -107,10 +94,6 @@ export class DmsCreateStateClass {
       window.localStorage.removeItem(this.storageId);
     };
     this.cleanup = () => {
-      // const msgIds = Object.values(this.msgIds);
-      // if (msgIds.length) {
-      //   dmsMsg.removePageMessage(msgIds);
-      // }
       this.sections.forEach(section =>
         section.attributes.forEach(att => att.cleanup())
       );
@@ -160,43 +143,24 @@ class Attribute {
     this.hasValue = false;
     this.verified = !this.required;
 
-    this.hasDefault = ("default" in att);
+    this.hasDefault = !this.isArray && ("default" in att);
     this.defaultLoaded = false;
     this.defaultValue = undefined;
 
+    this.setValues = setValues;
+
     this.onChange = (value, doLive = true) => {
-      this.value = value;
-      this.hasValue = this.checkHasValue(value);
-      this.verified = this.verifyValue(value);
-      // this.sendWarnings(value);
+      this.value = (typeof value === "function") ? value(this.value) : value;
+      this.hasValue = this.checkHasValue(this.value);
+      this.verified = this.verifyValue(this.value);
       this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
-      setValues(this.key, value, doLive);
+      if (typeof this.setValues === "function") {
+        this.setValues(this.key, this.value, doLive);
+      }
     }
 
-
-    // this.msgIds = {};
     this.hasWarning = false;
-    // this.setWarning = (type, warning) => {
-    //   if (warning && !(type in this.msgIds)) {
-    //     const msgId = dmsMsg.newMsgId();
-    //     this.msgIds[type] = msgId;
-    //     if (typeof warning === "string") {
-    //       warning = { msg: warning };
-    //     }
-    //     dmsMsg.sendAttributeMessage({ ...warning, id: msgId });
-    //   }
-    //   else if (!warning && (type in this.msgIds)) {
-    //     const msgId = this.msgIds[type];
-    //     dmsMsg.removeAttributeMessage([msgId]);
-    //     delete this.msgIds[type];
-    //   }
-    //   this.hasWarning = Boolean(this.getWarnings().length);
-    // }
     this.cleanup = () => {
-      // const msgIds = Object.values(this.msgIds);
-      // if (msgIds.length) {
-      //   dmsMsg.removeAttributeMessage(msgIds);
-      // }
     }
     this.onSave = () => {
 
@@ -237,22 +201,6 @@ class Attribute {
     }
     return !this.required;
   }
-  // sendWarnings = value => {
-  //   if (!this.verified) {
-  //     if (!this.hasValue && this.required) {
-  //       this.setWarning("missing-data", `Missing value for required attribute: ${ this.name }.`);
-  //       this.setWarning("invalid-data", null);
-  //     }
-  //     else {
-  //       this.setWarning("invalid-data", `Invalid value for attribute: ${ this.name }.`);
-  //       this.setWarning("missing-data", null);
-  //     }
-  //   }
-  //   else {
-  //     this.setWarning("invalid-data", null);
-  //     this.setWarning("missing-data", null);
-  //   }
-  // };
   initValue = value => {
     if (this.isArray) {
       this.onChange(value || [], false);
@@ -262,7 +210,6 @@ class Attribute {
       this.onChange(value, false);
     }
   }
-  // getWarnings = () => Object.values(this.msgIds);
 }
 
 class EditorAttribute extends Attribute {
@@ -360,16 +307,20 @@ class DmsAttribute extends Attribute {
 
     this.value = this.isArray ? [] : {};
 
-    this.defaultValue = undefined;//this.isArray ? [] : this.getDefault(props);
-    this.hasDefault = false;//this.isArray ? false : Boolean(Object.keys(this.defaultValue).length);
+    this.Attributes = this.attributes.map(att => makeNewAttribute(att, null, props, mode));
+
+    this.defaultValue = undefined;
+    this.hasDefault = !this.isArray && this.Attributes.reduce((a, c) => a || c.hasDefault, false);
     this.defaultLoaded = false;
 
-    this.required = this.isArray ? this.required : isRequired(this.attributes);
+    this.required = this.required || isRequired(this.attributes);
+    this.verified = !this.required;
   }
   clearValue() {
     super.clearValue();
     this.value = this.isArray ? [] : {};
-    this.hasDefault = false;
+    this.verified = !this.required;
+    // this.hasDefault = this.Attributes.reduce((a, c) => a || c.hasDefault, false);;
     this.defaultValue = undefined;
     this.defaultLoaded = false;
   }
@@ -420,13 +371,25 @@ class DmsAttribute extends Attribute {
     }, {})
   }
   getDefault = props => {
-    const defaults = this._getDefault(props, this.attributes);
-    if ((this.defaultLoaded = checkDmsDefault(defaults)) === true) {
-      this.defaultValue = defaults;
-    };
-    return defaults;
+    // if (this.isArray) {
+    //   return [];
+    // }
+    this.defaultValue = this.Attributes.reduce((a, c) => {
+      if (c.hasDefault) {
+        a[c.key] = c.getDefault(props);
+      }
+      return a;
+    }, {});
+    this.defaultLoaded = this.checkHasValue(this.defaultValue);
+    return this.defaultValue;
+
+    // const defaults = this._getDefault(props, this.attributes);
+    // if ((this.defaultLoaded = checkDmsDefault(defaults)) === true) {
+    //   this.defaultValue = defaults;
+    // };
+    // return defaults;
   }
-  _getValue = (value, attributes) => {
+  _getValueOld = (value, attributes) => {
     return attributes.reduce((a, c) => {
       const Value = get(value, c.key),
         length = get(Value, "length", 0);
@@ -452,13 +415,26 @@ class DmsAttribute extends Attribute {
       return a;
     }, {});
   }
+  _getValue = value => {
+    return this.Attributes.reduce((a, c) => {
+      if (c.checkHasValue(value[c.key])) {
+        a[c.key] = c.getValue(value[c.key]);
+      }
+      return a;
+    }, {});
+  }
   getValue = values => {
     if (Array.isArray(values)) {
-      return values.map(v => this._getValue(v, this.attributes));
+      return values.map(value => this._getValue(value));
     }
-    return this._getValue(values, this.attributes);
+    return this._getValue(values);
+
+    // if (Array.isArray(values)) {
+    //   return values.map(v => this._getValue(v, this.attributes));
+    // }
+    // return this._getValue(values, this.attributes);
   }
-  _initValue = (value, attributes) => {
+  _initValueOld = (value, attributes) => {
     return attributes.reduce((a, c) => {
       if (c.type === "dms-format") {
         a[c.key] = c.isArray ?
@@ -470,6 +446,9 @@ class DmsAttribute extends Attribute {
           get(value, c.key, []).map(createEditorState) :
           createEditorState(get(value, c.key));
       }
+      else if (c.type === "type-select") {
+        a[c.key] = get(value, c.key, c.isArray ? [] : undefined);
+      }
       else {
         a[c.key] = get(value, c.key, c.isArray ? [] : undefined);
         // if (c.type === "boolean") {
@@ -479,73 +458,58 @@ class DmsAttribute extends Attribute {
       return a;
     }, {})
   }
+  _initValue = value => {
+    return this.Attributes.reduce((a, att) => {
+      const setValues = (key, value) => {
+        a[key] = value;
+      };
+      att.setValues = setValues;
+      att.initValue(get(value, att.key));
+      return a;
+    }, {});
+  }
   initValue = value => {
     this.onChange(
-      this.isArray ? (value ? value.map(v => this._initValue(v, this.attributes)) : []) :
-      this._initValue(value, this.attributes),
-      false
-    );
+      Array.isArray(value) ?
+        value.map(v => this._initValue(v)) :
+        this._initValue(value)
+    )
+    // this.onChange(
+    //   this.isArray ? (value ? value.map(v => this._initValue(v, this.attributes)) : []) :
+    //   this._initValue(value, this.attributes),
+    //   false
+    // );
+  }
+  _checkHasValue = (value, isRaw) => {
+    return this.Attributes.reduce((a, c) => {
+      return a || c.checkHasValue(value[c.key], isRaw);
+    }, false);
   }
   checkHasValue = (value, isRaw = false, attributes = this.attributes) => {
-    return checkDmsValue(value, attributes, isRaw);
+    if (!hasValue(value)) return false;
+
+    if (Array.isArray(value)) {
+      return value.reduce((a, c) => a || this._checkHasValue(c, isRaw));
+    }
+    return this._checkHasValue(value, isRaw);
+    // return checkDmsValue(value, attributes, isRaw);
   }
-  // cleanup = () => {
-  //
-  // }
   onSave = () => {
 
   }
-  // _sendWarnings = (value, attributes, attTree) => {
-  //   attributes.forEach(att => {
-  //     const Value = get(value, att.key);
-  //
-  //     const missingKey = `missing-data-${ attTree.map(att => att.key).join("-") }-${ att.key }`,
-  //       invalidKey = `invalid-data-${ attTree.map(att => att.key).join("-") }-${ att.key }`;
-  //
-  //     let missingMsg = null,
-  //       invalidMsg = null;
-  //
-  //     if (att.isArray) {
-  //        if (att.required && !(Value && Value.length)) {
-  //          missingMsg = `Missing value for required attribute: ${ attTree.map(att => att.name).join(" -> ") } -> ${ att.name }.`;
-  //        }
-  //     }
-  //     else if (att.type === "dms-format") {
-  //       return this._sendWarnings(Value, att.attributes, [...attTree, att]);
-  //     }
-  //     else if (att.type === "richtext") {
-  //       if (att.required && !checkEditorValue(Value)) {
-  //         missingMsg = `Missing value for required attribute: ${ attTree.map(att => att.name).join(" -> ") } -> ${ att.name }.`;
-  //       }
-  //     }
-  //     else {
-  //       const _hasValue = hasValue(Value),
-  //         verified = verifyValue(Value, att.type, att.verify);
-  //       if (att.required && !_hasValue) {
-  //         missingMsg = `Missing value for required attribute: ${ attTree.map(att => att.name).join(" -> ") } -> ${ att.name }.`;
-  //       }
-  //       else if (_hasValue && !verified) {
-  //         invalidMsg = `Invalid value for attribute: ${ attTree.map(att => att.name).join(" -> ") } -> ${ att.name }.`;
-  //       }
-  //     }
-  //     this.setWarning(missingKey, missingMsg);
-  //     this.setWarning(invalidKey, invalidMsg);
-  //   })
-  // }
-  // sendWarnings = value => {
-  //   if (this.isArray) {
-  //     if (this.required && !hasValue(value)) {
-  //       this.setWarning(`missing-data-${ this.key }`, `Missing value for required attribute: ${ this.name }.`);
-  //     }
-  //     else {
-  //       this.setWarning(`missing-data-${ this.key }`, null);
-  //     }
-  //     return;
-  //   }
-  //   this._sendWarnings(value, this.attributes, [this]);
-  // }
+  _verifyValue = value => {
+    return !hasValue(value) ? !this.required : this.Attributes.reduce((a, c) => {
+      return a && c.verifyValue(value[c.key]);
+    }, true);
+  }
   verifyValue = (value, attributes = this.attributes) => {
-    return verifyDmsValue(value, attributes, this.required);
+    if (Array.isArray(value)) {
+      return value.reduce((a, c) => {
+        return a && this._verifyValue(c);
+      }, this.required ? Boolean(value.length) : true)
+    }
+    return this._verifyValue(value);
+    // return verifyDmsValue(value, attributes, this.required);
   }
 }
 
@@ -568,11 +532,45 @@ export class TypeSelectAttribute extends Attribute {
 
     this.isArray = false;
 
-    this.Attributes = getTypeAttributes(att.attributes, props.registeredFormats);
+//     const setAttValue = (key, value, doLive = true) => {
+// console.log("SET ATT VALUE:", key, value)
+//       this.value = { ...this.value, key, value };
+//       const Attribute = this.getAtrribute(key);
+//       this.hasValue = Attribute.checkHasValue(value);
+//       this.verified = Attribute.verifyValue(value);
+//       this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
+//       this.setValues(this.key, this.value);
+//     }
 
-    this.SelectedAttribute = null;
+    this.Attributes = att.attributes.map(att => makeNewAttribute(att, null, props, mode));
+// console.log("<TypeSelectAttribute>", this)
 
-    this.value = this.isArray ? [] : { attribute: undefined, value: undefined };
+    this.onChange = (changeValue, doLive = true) => {
+      changeValue = changeValue || {};
+
+      let { key, name, type, value } = changeValue;
+
+      if (key !== get(this, ["value", "key"])) {
+        value = undefined;
+        if (key) {
+          const Attribute = this.getAtrribute(key);
+          const emptyValueFunc = getInputData(type).getEmptyValueFunc(Attribute, props)
+          value = Attribute.isArray ? [] : emptyValueFunc ? emptyValueFunc() : undefined;
+        }
+        else {
+          this.SelectedAttribute = null;
+        }
+      }
+
+      this.value = { key, name, type, value };
+      this.hasValue = this.checkHasValue(this.value);
+      this.verified = this.verifyValue(this.value);
+      this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
+
+      this.setValues(this.key, this.value, doLive);
+    }
+
+    this.value = this.isArray ? [] : {};
     this.hasValue = false;
     this.verified = !this.required;
 
@@ -580,56 +578,28 @@ export class TypeSelectAttribute extends Attribute {
     this.defaultLoaded = false;
     this.defaultValue = undefined;
 
-    this.onAttributeChange = (key, value, doLive = true) => {
-      this.value = { ...this.value, value };
-      this.hasValue = this.SelectedAttribute.checkHasValue(value);
-      this.verified = this.SelectedAttribute.verifyValue(value);
-      this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
-      setValues(this.key, this.value);
-    }
-
-    this.onChange = (newValue, doLive = true) => {
-      newValue = newValue || {};
-      const { attribute, value } = newValue;
-      if (attribute !== get(this, ["value", "attribute"])) {
-        this.SelectedAttribute = null;
-        if (attribute) {
-          const Attribute = this.Attributes.reduce((a, c) => c.key === attribute ? c : a, null);
-          this.SelectedAttribute = makeNewAttribute(Attribute, this.onAttributeChange, props, mode);
-        }
-      }
-      this.value = { attribute, value };
-
-      if (attribute) {
-        this.SelectedAttribute.initValue(value);
-      }
-      else {
-        this.value = value;
-        this.hasValue = false;
-        this.verified = !this.required;
-        this.doLiveUpdate = doLive && Boolean(this.liveUpdate);
-        setValues(this.key, value);
-      }
+    this.initValue = value => {
+      this.onChange(value, false);
     }
 
     this.mapOldToNew = oldValue => {
-      if (typeof oldValue !== "object") return undefined;
-
-      let { attribute, value } = oldValue || {};
-
-      const initValue = (key, newValue) => {
-        value = newValue;
-      }
-
-      let SelectedAttribute = null;
-      const Attribute = this.Attributes.reduce((a, c) => c.key === attribute ? c : a, null);
-      if (Attribute) {
-        SelectedAttribute = makeNewAttribute(Attribute, initValue, props, mode);
-      }
-      if (value) {
-        SelectedAttribute.initValue(value);
-      }
-      return { attribute, value };
+      // if (typeof oldValue !== "object") return undefined;
+      //
+      // let { attribute, value } = oldValue || {};
+      //
+      // const initValue = (key, newValue) => {
+      //   value = newValue;
+      // }
+      //
+      // let SelectedAttribute = null;
+      // const Attribute = this.Attributes.reduce((a, c) => c.key === attribute ? c : a, null);
+      // if (Attribute) {
+      //   SelectedAttribute = makeNewAttribute(Attribute, initValue, props, mode);
+      // }
+      // if (value) {
+      //   SelectedAttribute.initValue(value);
+      // }
+      // return { attribute, value };
     };
 
     this.hasWarning = false;
@@ -640,11 +610,17 @@ export class TypeSelectAttribute extends Attribute {
 
     }
   }
+  getAtrribute(key) {
+    return this.Attributes.reduce((a, c) => {
+      return c.key === key ? c : a;
+    }, null)
+  }
   clearValue() {
-    this.value = this.isArray ? [] : { attribute: undefined, value: undefined };
+    this.value = this.isArray ? [] : {};
     this.hasValue = false;
     this.verified = !this.required;
 
+    this.hasDefault = false;
     this.defaultLoaded = false;
     this.defaultValue = undefined;
   }
@@ -656,26 +632,32 @@ export class TypeSelectAttribute extends Attribute {
   }
 
   getValue = fromValue => {
-    const { attribute, value } = fromValue;
+    const { key, type, name, value } = fromValue;
+    const Attribute = this.getAtrribute(key);
     return {
-      attribute,
-      value: this.SelectedAttribute.getValue(value)
+      key, type, name,
+      value: Attribute ? Attribute.getValue(value) : undefined
     }
   };
 
   checkHasValue = (checkValue, isRaw = false) => {
-    const { value } = checkValue || {};
-    if (this.SelectedAttribute) {
-      return this.SelectedAttribute.checkHasValue(value, isRaw);
+// console.log("<TypeSelectAttribute::checkHasValue>", this, checkValue);
+    const { value, key } = checkValue || {};
+    const Attribute = this.getAtrribute(key);
+    if (Attribute) {
+      return Attribute.checkHasValue(value, isRaw);
     }
     else {
       return hasValue(value);
     }
   }
   verifyValue = verifyValue => {
-    const { value } = verifyValue;
-    if (this.SelectedAttribute) {
-      return this.SelectedAttribute.verifyValue(value);
+    if (verifyValue) {
+      const { value, key } = verifyValue;
+      const Attribute = this.getAtrribute(key);
+      if (Attribute) {
+        return Attribute.verifyValue(value);
+      }
     }
     return !this.required;
   }

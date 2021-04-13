@@ -1,10 +1,10 @@
 import React from "react"
 
-import { useDms } from "../contexts/dms-context"
-import { useAuth } from "../contexts/auth-context"
+// import { useDms } from "../contexts/dms-context"
+// import { useAuth } from "../contexts/auth-context"
 import { useTheme } from "@availabs/avl-components"
 
-import { useSetSections } from "../wrappers/dms-create"
+// import { useSetSections } from "../wrappers/dms-create"
 
 import {
   useDmsSections
@@ -13,10 +13,13 @@ import {
 const DmsInput = React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, onBlur, onChange, value, ...props }, ref) => {
   value = value || {};
 
-  const Props = { ...props, ...useDms(), user: useAuth().user };
+  // const Props = { ...props, ...useDms(), user: useAuth().user };
 
-  const sections = useSetSections(Attribute.Format),
-    Sections = useDmsSections(sections, value, onChange, Props, Attribute.mode);
+  const handleChange = React.useCallback((k, v) => {
+    onChange(prev => ({ ...prev, [k]: typeof v === "funvtion" ? v(prev[k]) : v }));
+  }, [onChange]);
+
+  const Sections = useDmsSections(Attribute.Attributes, handleChange);
 
   const [hasFocus, setFocus] = React.useState(autoFocus),
     [prev, setPrev] = React.useState(hasFocus),

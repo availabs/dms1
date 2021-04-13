@@ -47,7 +47,8 @@ const getComp = (value, att, i = null) => {
     )
   }
   else if (att.type === "dms-format") {
-    return att.attributes.map(att => getComp(get(value, att.key), att))
+// console.log("<getComp> dms-format", att);
+    return att.Attributes.map(att => getComp(get(value, att.key), att))
   }
   else if (att.type === "img") {
     return (
@@ -59,12 +60,17 @@ const getComp = (value, att, i = null) => {
       </div>
     )
   }
+  else if (att.type === "type-select") {
+    if (!value) return null;
+// console.log("<getComp> type-select", att, value)
+    return getComp(value.value, att.Attributes.reduce((a, c) => c.key === value.key ? c : a, null), i);
+  }
   return (
     <div key={ key }>
       { !name ? null :
         <span className="font-bold">{ name }: </span>
       }
-      { value }
+      { `${ value }` }
     </div>
   )
 }
@@ -75,7 +81,8 @@ const getDmsDisplayComp = attribute => {
     return comp;
   }
 }
-function getEmptyFormatValue(att, props) {
+export function getEmptyFormatValue(att, props) {
+// console.log("<getEmptyFormatValue>", att)
   return att.attributes.reduce((a, c) => {
     if (c.type === "dms-format") {
       a[c.key] = getEmptyFormatValue(c);
@@ -84,10 +91,11 @@ function getEmptyFormatValue(att, props) {
       a[c.key] = createEmpty();
     }
     else if ("default" in c) {
+// console.log("GETTING DEFAULT:", c, getValue(c.default, { props }))
       a[c.key] = getValue(c.default, { props });
     }
-    return a;
-  }, {})
+    return c.isArray ? { ...a, [c.key]: [] } : a;
+  }, {});
 }
 
 const EditorDisplayComp = ({ value }) =>
@@ -118,7 +126,17 @@ const getDomain = (att, props) => {
   return domain;
 }
 
-const AvailableInputs = {
+const DefaultArrayProps = {
+  CreateButton: undefined,
+  DisplayControls: undefined,
+  EditComponent: undefined,
+  CustomArrayInput: undefined
+}
+export const setDefaultArrayProps = (key, value) => {
+  DefaultArrayProps[key] = value;
+}
+
+export const AvailableInputs = {
   $default: {
     InputComp: Input,
     getInputProps: (att, props) => {
@@ -128,12 +146,7 @@ const AvailableInputs = {
         ...inputProps
       }
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -144,12 +157,7 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", ColorDisplayComp);
     },
@@ -160,12 +168,7 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -181,12 +184,7 @@ const AvailableInputs = {
         multi: get(inputProps, "multi", Boolean(att.isArray))
       }
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => undefined,
     getEmptyValueFunc: (att, props) => undefined
   },
@@ -195,12 +193,7 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", undefined);
     },
@@ -211,12 +204,7 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", getBooleanDisplay(att));
     },
@@ -227,12 +215,7 @@ const AvailableInputs = {
     getInputProps: (att, props) => {
       return get(att, "inputProps", {});
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", MarkdownViewer);
     },
@@ -247,12 +230,7 @@ const AvailableInputs = {
         imgUploadUrl: imgUploadUrl || get(props, "imgUploadUrl")
       }
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", EditorDisplayComp);
     },
@@ -267,12 +245,7 @@ const AvailableInputs = {
         imgUploadUrl: imgUploadUrl || get(props, "imgUploadUrl")
       }
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", ImgDisplayComp);
     },
@@ -287,12 +260,7 @@ const AvailableInputs = {
         Attribute: att
       }
     },
-    getArrayProps: (att, props) => {
-      return {
-        showControls: true,
-        ...get(att, "arrayProps", {})
-      }
-    },
+    getArrayProps: (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => {
       return get(att, "DisplayComp", getDmsDisplayComp(att));
     },
@@ -307,7 +275,7 @@ const AvailableInputs = {
         Attribute: att
       }
     },
-    getArrayProps: (att, props) => ({ showControls: true }),
+    getArrayProps: (att, props) => (att, props) => get(att, "arrayProps", {}),
     getDisplayComp: (att, props) => undefined,
     getEmptyValueFunc: (att, props) => undefined
   }
@@ -320,7 +288,7 @@ export const addInput = (type, inputData) => {
     ...inputData
   };
 }
-const getInputData = type =>
+export const getInputData = type =>
   get(AvailableInputs, type, AvailableInputs["$default"]);
 
 export const getInput = (att, props, disabled) => {
@@ -336,16 +304,15 @@ export const getInput = (att, props, disabled) => {
 
 
   const inputProps = getInputProps(att, props),
-    { CustomArrayInput, ...arrayProps} = getArrayProps(att, props),
+    { CustomArrayInput, ...arrayProps } = { ...DefaultArrayProps, ...getArrayProps(att, props) },
     DisplayComp = getDisplayComp(att, props),
     getEmptyValue = getEmptyValueFunc(att, props);
 
   if (isArray && (type !== "select")) {
     return React.forwardRef((props, ref) => (
       CustomArrayInput ? (
-        <CustomArrayInput
-          { ...props } { ...arrayProps }
-          Input={ props.EditComp || InputComp }
+        <CustomArrayInput Input={ InputComp }
+          { ...arrayProps } { ...props }
           id={ att.id }
           inputProps={ inputProps }
           verifyValue={ att.verifyValue }
@@ -354,9 +321,8 @@ export const getInput = (att, props, disabled) => {
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }/>
       ) : useOrdered ? (
-        <OrderedArrayInput
-          { ...props } { ...arrayProps }
-          Input={ props.EditComp || InputComp }
+        <OrderedArrayInput Input={ InputComp }
+          { ...arrayProps } { ...props }
           id={ att.id }
           inputProps={ inputProps }
           verifyValue={ att.verifyValue }
@@ -365,9 +331,7 @@ export const getInput = (att, props, disabled) => {
           getEmptyValue={ getEmptyValue }
           disabled={ disabled || (att.editable === false) }/>
       ) : (
-        <ArrayInput
-          { ...props }
-          Input={ props.EditComp || InputComp }
+        <ArrayInput Input={ InputComp } { ...props }
           id={ att.id }
           inputProps={ inputProps }
           verifyValue={ att.verifyValue }
@@ -380,7 +344,7 @@ export const getInput = (att, props, disabled) => {
   }
 
   return React.forwardRef((props, ref) => {
-    const Comp = props.EditComp || InputComp;
+    const Comp = props.Input || InputComp;
     return (
       <Comp id={ att.id } { ...inputProps } { ...props } ref={ ref }
         disabled={ disabled || (att.editable === false) }/>

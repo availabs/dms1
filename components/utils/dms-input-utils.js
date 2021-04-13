@@ -1,12 +1,17 @@
 import React from "react"
 
+import get from "lodash.get"
+
 import { hasValue, verifyValue } from "@availabs/avl-components"
 
 import { isRequired, getAttributes } from "../../wrappers/utils/dms-create-utils"
 
 import { useDms } from "../../contexts/dms-context"
 
-import { TypeSelectAttribute } from "../../wrappers/utils/dms-create-utils"
+import {
+  TypeSelectAttribute,
+  makeNewAttribute as makeNewDmsAttribute
+} from "../../wrappers/utils/dms-create-utils"
 import { getInput } from "../../wrappers/utils/get-dms-input"
 
 import {
@@ -73,7 +78,6 @@ class DmsAttribute extends Attribute {
 }
 
 const makeNewAttribute = (att, formats, setValues, props, mode) => {
-console.log("makeNewAttribute ATT:",att)
   if (att.type === "dms-format") {
     return new DmsAttribute(att, formats, props);
   }
@@ -86,13 +90,30 @@ console.log("makeNewAttribute ATT:",att)
   return new Attribute(att, props);
 }
 
-export const useDmsSections = (sections, value, onChange, props, mode) => {
+export const useDmsSections = (Attributes, handleChange) => {
+  let section = null;
+  return Attributes.reduce((a, c) => {
+    if (c.section !== section) {
+      a.push({ title: section, attributes: [], index: a.length });
+      section = c.section;
+    }
+    c.setValues = handleChange;
+    a[a.length - 1].attributes.push(c);
+    return a;
+  }, []);
+}
+
+export const useDmsSectionsOld = (sections, onChange, props, mode) => {
 
   const { registeredFormats } = useDms();
 
   const setValues = React.useCallback((k, v) => {
-    onChange({ ...value, [k]: v });
-  }, [value, onChange]);
+    onChange(prev => {
+      return {
+        ...prev, [k]: typeof v === "function" ? v(prev[k]) : v
+      }
+    });
+  }, [onChange]);
 
   const [Sections, setSections] = React.useState([]);
 
@@ -110,7 +131,7 @@ export const useDmsSections = (sections, value, onChange, props, mode) => {
       })
       setSections(Sections);
     }
-  }, [sections, Sections.length, registeredFormats, props]);
+  }, [sections, Sections.length, registeredFormats, setValues, props]);
 
   return React.useMemo(() => {
     Sections.forEach(section => {
