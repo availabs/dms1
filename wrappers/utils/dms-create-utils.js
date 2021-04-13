@@ -244,6 +244,7 @@ class EditorAttribute extends Attribute {
     }
     else {
       this.onChange(createEditorState(value), false);
+// console.log("<EditorAttribute>", value, this)
     }
   }
   checkHasValue = (value, isRaw = false) => {
@@ -550,16 +551,14 @@ export class TypeSelectAttribute extends Attribute {
 
       let { key, name, type, value } = changeValue;
 
-      if (key !== get(this, ["value", "key"])) {
-        value = undefined;
-        if (key) {
-          const Attribute = this.getAtrribute(key);
-          const emptyValueFunc = getInputData(type).getEmptyValueFunc(Attribute, props)
-          value = Attribute.isArray ? [] : emptyValueFunc ? emptyValueFunc() : undefined;
+      if (key && !hasValue(value)) {
+        const Attribute = this.getAtrribute(key);
+        const saved = Attribute.setValues;
+        Attribute.setValues = (k, v) => {
+          value = v;
         }
-        else {
-          this.SelectedAttribute = null;
-        }
+        Attribute.initValue(value);
+        Attribute.setValues = saved;
       }
 
       this.value = { key, name, type, value };
@@ -578,8 +577,14 @@ export class TypeSelectAttribute extends Attribute {
     this.defaultLoaded = false;
     this.defaultValue = undefined;
 
-    this.initValue = value => {
-      this.onChange(value, false);
+    this.initValue = initValue => {
+      let { key, value, type, name } = initValue || {};
+      const Attribute = this.getAtrribute(key);
+      Attribute.setValues = (k, v) => {
+        value = v;
+      }
+      Attribute.initValue(value);
+      this.onChange({ key, value, type, name }, false);
     }
 
     this.mapOldToNew = oldValue => {

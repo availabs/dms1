@@ -6,33 +6,9 @@ import { useTheme } from "@availabs/avl-components"
 
 // import { useSetSections } from "../wrappers/dms-create"
 
-import {
-  useDmsSections
-} from "./utils/dms-input-utils"
+import dmsInputWrapper from "../wrappers/dms-input"
 
-const DmsInput = React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, onBlur, onChange, value, ...props }, ref) => {
-  value = value || {};
-
-  // const Props = { ...props, ...useDms(), user: useAuth().user };
-
-  const handleChange = React.useCallback((k, v) => {
-    onChange(prev => ({ ...prev, [k]: typeof v === "funvtion" ? v(prev[k]) : v }));
-  }, [onChange]);
-
-  const Sections = useDmsSections(Attribute.Attributes, handleChange);
-
-  const [hasFocus, setFocus] = React.useState(autoFocus),
-    [prev, setPrev] = React.useState(hasFocus),
-    _onFocus = React.useCallback(() => setFocus(true), [setFocus]),
-    _onBlur = React.useCallback(() => setFocus(false), [setFocus]);
-
-  React.useEffect(() => {
-    if (hasFocus !== prev) {
-      (typeof onBlur === "function") && !hasFocus && onBlur();
-      (typeof onFocus === "function") && hasFocus && onFocus();
-      setPrev(hasFocus);
-    }
-  }, [hasFocus, prev, onFocus, onBlur]);
+const DmsInput = dmsInputWrapper(({ Sections, hasFocus, id, autoFocus = false, onFocus, onBlur, value, ref, ...props }) => {
 
   const theme = useTheme();
 
@@ -56,7 +32,7 @@ const DmsInput = React.forwardRef(({ Attribute, id, autoFocus = false, onFocus, 
                   <Input { ...props } onChange={ att.onChange } value={ value[key] }
                     ref={ (section.index === 0) && (i === 0) ? ref : null }
                     autoFocus={ autoFocus && (section.index === 0) && (i === 0) }
-                    onFocus={ _onFocus } onBlur={ _onBlur }/>
+                    onFocus={ onFocus } onBlur={ onBlur }/>
                 </div>
               )
             }

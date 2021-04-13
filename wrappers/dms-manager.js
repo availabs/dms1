@@ -37,6 +37,9 @@ const dmsManager = Component =>
         }
         return child;
       })
+
+// console.log("<DmsManager>", props, children)
+
     return (
       <Component { ...props }>{ children }</Component>
     )

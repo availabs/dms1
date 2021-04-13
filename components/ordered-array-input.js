@@ -174,7 +174,7 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
     <div className="w-full">
       <div className="flex flex-col">
 
-        <DefaultCreateButton opened={ openCreate }
+        <CreateButton opened={ openCreate }
           create={ createNewItem }/>
 
         { !openCreate ? null :
@@ -224,7 +224,8 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
               moveUp={ e => move(i, -1) }
               canMoveUp={ i > 0 }
               moveDown={ e => move(i, 1) }
-              canMoveDown={ i < (value.length - 1) }>
+              canMoveDown={ i < (value.length - 1) }
+              value={ v }>
 
               <DisplayComp value={ v } />
 

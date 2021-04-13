@@ -24,7 +24,7 @@ const TypeSelect = ({ Attribute, onChange, value }) => {
     Selected.setValues = handleValueChange;
   }
 
-console.log("<type-select> Selected:", Selected, value);
+// console.log("<type-select> Selected:", Selected, value);
 
   const theme = useTheme();
 

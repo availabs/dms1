@@ -23,7 +23,7 @@ import { getValue } from "../../utils"
 
 import get from "lodash.get"
 
-const getComp = (value, att, i = null) => {
+export const getDisplayComp = (value, att, i = null) => {
   if (!hasValue(value)) return null;
 
   const key = `${ att.key }${ i === null ? "" : `-${ i }` }`,
@@ -33,7 +33,7 @@ const getComp = (value, att, i = null) => {
     return (
       <div key={ key }>
         <div className="font-bold">{ name }</div>
-        { value.map((v, i) => getComp(v, att, i)) }
+        { value.map((v, i) => getDisplayComp(v, att, i)) }
       </div>
     )
   }
@@ -47,8 +47,8 @@ const getComp = (value, att, i = null) => {
     )
   }
   else if (att.type === "dms-format") {
-// console.log("<getComp> dms-format", att);
-    return att.Attributes.map(att => getComp(get(value, att.key), att))
+// console.log("<getDisplayComp> dms-format", att);
+    return att.Attributes.map(att => getDisplayComp(get(value, att.key), att))
   }
   else if (att.type === "img") {
     return (
@@ -62,8 +62,8 @@ const getComp = (value, att, i = null) => {
   }
   else if (att.type === "type-select") {
     if (!value) return null;
-// console.log("<getComp> type-select", att, value)
-    return getComp(value.value, att.Attributes.reduce((a, c) => c.key === value.key ? c : a, null), i);
+// console.log("<getDisplayComp> type-select", att, value)
+    return getDisplayComp(value.value, att.Attributes.reduce((a, c) => c.key === value.key ? c : a, null), i);
   }
   return (
     <div key={ key }>
@@ -77,7 +77,7 @@ const getComp = (value, att, i = null) => {
 
 const getDmsDisplayComp = attribute => {
   return ({ value }) => {
-    const comp = React.useMemo(() => getComp(value, attribute), [value]);
+    const comp = React.useMemo(() => getDisplayComp(value, attribute), [value]);
     return comp;
   }
 }
@@ -98,8 +98,8 @@ export function getEmptyFormatValue(att, props) {
   }, {});
 }
 
-const EditorDisplayComp = ({ value }) =>
-  <ReadOnlyEditor value={ value } isRaw={ false }/>;
+const EditorDisplayComp = ({ value, isRaw = false }) =>
+  <ReadOnlyEditor value={ value } isRaw={ isRaw }/>;
 
 const ColorDisplayComp = ({ value }) =>
   <div className="w-full h-full flex items-center justify-center"
@@ -114,7 +114,7 @@ const ImgDisplayComp = ({ value }) => {
 const getBooleanDisplay = att =>
   ({ value }) => {
     return (
-      <div>{ att.name }: { value }</div>
+      <div>{ att.name }: { `${ value }` }</div>
     )
   }
 
@@ -126,14 +126,19 @@ const getDomain = (att, props) => {
   return domain;
 }
 
-const DefaultArrayProps = {
+let DefaultArrayProps = {
   CreateButton: undefined,
   DisplayControls: undefined,
   EditComponent: undefined,
   CustomArrayInput: undefined
 }
 export const setDefaultArrayProps = (key, value) => {
-  DefaultArrayProps[key] = value;
+  if (typeof key === "object") {
+    DefaultArrayProps = { ...DefaultArrayProps, ...key };
+  }
+  else {
+    DefaultArrayProps[key] = value;
+  }
 }
 
 export const AvailableInputs = {
@@ -276,7 +281,9 @@ export const AvailableInputs = {
       }
     },
     getArrayProps: (att, props) => (att, props) => get(att, "arrayProps", {}),
-    getDisplayComp: (att, props) => undefined,
+    getDisplayComp: (att, props) => {
+      return get(att, "DisplayComp", getDmsDisplayComp(att));
+    },
     getEmptyValueFunc: (att, props) => undefined
   }
 }
