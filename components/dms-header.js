@@ -44,7 +44,7 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
         ${ theme.menuBg }
       ` }>
-      <div className="">
+      <div>
         <HeaderComponent title={
           <Title>{ title || `${ props.app } Manager`
         }</Title> }>
