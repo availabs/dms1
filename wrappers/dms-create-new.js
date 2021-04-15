@@ -106,12 +106,12 @@ export const useDmsCreateState = (props, mode = "create") => {
       DmsCreateState.canGoNext = Sections[index].verified && ((index + 1) < Sections.length);
       DmsCreateState.next = () => {
         if (!DmsCreateState.canGoNext) return;
-        setIndex(prev.section + 1);
+        setIndex(index + 1);
       };
       DmsCreateState.canGoPrev = (index > 0);
       DmsCreateState.prev = () => {
         if (!DmsCreateState.canGoPrev) return;
-        setIndex(prev.section - 1);
+        setIndex(index - 1);
       };
     }
 
