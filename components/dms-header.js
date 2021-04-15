@@ -6,10 +6,10 @@ import { useDms } from "../contexts/dms-context"
 import { DmsButton } from "./dms-button"
 import { useMessenger } from "../contexts/messenger-context"
 
-const Title = ({ title }) => {
+const Title = ({ children }) => {
   return (
     <div className="container mx-auto">
-      { title }
+      { children }
     </div>
   )
 }
@@ -42,21 +42,26 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
     <div className={ `
         fixed top-0 left-0 right-0 z-50 ${ theme.menuBg }
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
+        ${ theme.menuBg }
       ` }>
-      <HeaderComponent title={ <Title title={ title || `${ props.app } Manager` }/> }>
-        <div className="flex-0 flex items-center">
-          { !pageMessages.length ? null :
-            <Warning warnings={ pageMessages }/>
-          }
-          { !attributeMessages.length ? null :
-            <Warning warnings={ attributeMessages } type="att"/>
-          }
-          { dmsActions.map(a =>
-              <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
-            )
-          }
-        </div>
-      </HeaderComponent>
+      <div>
+        <HeaderComponent title={
+          <Title>{ title || `${ props.app } Manager` }</Title>
+        }>
+          <div className="flex items-center">
+            { !pageMessages.length ? null :
+              <Warning warnings={ pageMessages }/>
+            }
+            { !attributeMessages.length ? null :
+              <Warning warnings={ attributeMessages } type="att"/>
+            }
+            { dmsActions.map(a =>
+                <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
+              )
+            }
+          </div>
+        </HeaderComponent>
+      </div>
     </div>
   )
 }
