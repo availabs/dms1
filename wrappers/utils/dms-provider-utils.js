@@ -13,6 +13,7 @@ const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
   if (attributes) {
     Attributes.push(...attributes.map((att, i) => {
       const Att = {
+        section: rest.title || `${ id.join(".") }`,
         ...rest,
         ...att,
         depth,
@@ -29,6 +30,8 @@ const flattenAttributes = (Sections, Attributes = [], depth = 0, id = [0]) => {
 }
 
 export const processFormat = (format, formats = {}) => {
+  if (!format) return formats;
+
   const Format = clonedeep(format);
 
   if (Format.registerFormats) {

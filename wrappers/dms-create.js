@@ -18,7 +18,7 @@ export const useSetSections = format => {
           a.push({ title, attributes: [] });
         }
         if (get(c, ["dmsActions", "length"], 0)) {
-          a[a.length - 1].dmsActions = c.dmsActions;
+          a[a.length - 1].dmsActions = [...c.dmsActions];
         }
         a[a.length - 1].attributes.push(c);
         return a;
@@ -118,6 +118,7 @@ export const useDmsCreateState = (props, mode = "create") => {
         att.checkHasValue(values[att.key]) &&
         !deepequal(att.defaultValue, DmsCreateState.saveValues[att.key])
       );
+// console.log("ATT:", att.hasDefault, att.defaultLoaded, att);
       DmsCreateState.defaultsLoaded = DmsCreateState.defaultsLoaded && (
         !att.hasDefault || att.defaultLoaded
       );
@@ -173,7 +174,7 @@ export const useDmsCreateState = (props, mode = "create") => {
   return DmsCreateState;
 }
 
-const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = true, item = null) => {
+const useLocalStorage = (DmsCreateState, doSave = false, ready = true, item = null) => {
 
 // THIS FORCES THE MODAL TO ALWAYS SLIDE IN WHEN ENTERING CREATE
   const [_ready, setReady] = useState(false);
@@ -192,6 +193,8 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
     }, []),
     [data, setData] = useState(null);
 
+// console.log("useLocalStorage", doSave, ready)
+
   useEffect(() => {
     if (!ready || checked || showModal) return;
 
@@ -199,7 +202,7 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
     setShowModal(Boolean(data));
     setChecked(!Boolean(data));
     setData(data);
-  }, [checked, data, DmsCreateState, format, item, ready, showModal]);
+  }, [checked, data, DmsCreateState, item, ready, showModal]);
 
   const loadData = useCallback(() => {
     DmsCreateState.initValues(data);
@@ -210,6 +213,7 @@ const useLocalStorage = (DmsCreateState, format = {}, doSave = false, ready = tr
 
   const saveToLocalStorage = useMemo(() => debounce((DmsCreateState) => {
     const { saveValues } = DmsCreateState;
+// console.log("SAVING TO LOCAL STORAGE:", saveValues);
     if (hasValue(saveValues)) {
       window.localStorage.setItem(DmsCreateState.storageId, JSON.stringify(saveValues));
     }
@@ -282,7 +286,9 @@ export const dmsCreate = Component => {
       }
     });
 
-    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, props.format, DmsCreateState.hasValues, DmsCreateState.defaultsLoaded);
+// console.log(DmsCreateState.hasValues, DmsCreateState.verified, DmsCreateState.defaultsLoaded);
+
+    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, DmsCreateState.hasValues, DmsCreateState.defaultsLoaded);
 
     return (
       <>
@@ -377,7 +383,7 @@ export const dmsEdit = Component => {
       }
     }
 
-    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, props.format, DmsCreateState.hasValues && DmsCreateState.hasBeenUpdated, Boolean(item), item);
+    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, DmsCreateState.hasValues && DmsCreateState.hasBeenUpdated, Boolean(item), item);
 
     return (
       <>

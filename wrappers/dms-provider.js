@@ -200,7 +200,7 @@ const dmsProvider = (Component, options = {}) => {
         registeredFormats: this.registeredFormats,
         [type]: item,
         dataItems,
-        format: this.registeredFormats[`${ format.app }+${ format.type }`],
+        format: format ? this.registeredFormats[`${ format.app }+${ format.type }`] : null,
         item,
         type,
         app,

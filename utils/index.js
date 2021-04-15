@@ -6,13 +6,15 @@ import * as d3timeFormat from "d3-time-format"
 
 import { hasValue, verifyValue } from "@availabs/avl-components"
 
-export const checkEditorValue = value => Boolean(value) && value.getCurrentContent().hasText();
+export const checkEditorValue = value => {
+  return Boolean(value) && value.getCurrentContent().hasText()
+};
 
-export const checkDmsValue = (value, attributes) => {
+export const checkDmsValue = (value, attributes, isRaw = false) => {
   if (!hasValue(value)) return false;
 
   if (Array.isArray(value)) {
-    return value.reduce((a, c) => a || checkDmsValue(c, attributes), false)
+    return value.reduce((a, c) => a || checkDmsValue(c, attributes, isRaw), false)
   }
 
   return attributes.reduce((a, c) => {
@@ -20,13 +22,16 @@ export const checkDmsValue = (value, attributes) => {
 
     const Value = get(value, c.key);
     if (c.type === "dms-format") {
-      return checkDmsValue(Value, c.attributes);
+      return checkDmsValue(Value, c.attributes, isRaw);
     }
     else if (c.type === "richtext") {
-      if (Array.isArray(Value)) {
-        return Value.reduce((a, c) => a || c.getCurrentContent().hasText(), false);
+      if (isRaw) {
+        return hasValue(Value);
       }
-      return Boolean(Value) && Value.getCurrentContent().hasText();
+      else if (Array.isArray(Value)) {
+        return Value.reduce((a, c) => a || checkEditorValue(Value), false);
+      }
+      return checkEditorValue(Value);
     }
     else if (Array.isArray(Value)) {
       return Value.reduce((a, c) => a || hasValue(c), false);

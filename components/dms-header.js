@@ -14,7 +14,7 @@ const Title = ({ children }) => {
   )
 }
 
-const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, ...props }) => {
+const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], navBarSide = true, userMenu = false, ...props }) => {
   const { stack, top, item } = useDms(),
     { pageMessages, attributeMessages } = useMessenger();
 
@@ -44,6 +44,7 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
         ${ navBarSide ? `md:ml-${ theme.sidebarW }` : '' }
         ${ theme.menuBg }
       ` }>
+<<<<<<< HEAD
       <div>
         <HeaderComponent title={
           <Title>{ title || `${ props.app } Manager` }</Title>
@@ -62,6 +63,25 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
           </div>
         </HeaderComponent>
       </div>
+=======
+      <HeaderComponent userMenu={ userMenu }
+        title={
+          <Title title={ title || `${ props.app } Manager` }/>
+        }>
+        <div className="flex-0 flex items-center">
+          { !pageMessages.length ? null :
+            <Warning warnings={ pageMessages }/>
+          }
+          { !attributeMessages.length ? null :
+            <Warning warnings={ attributeMessages } type="att"/>
+          }
+          { dmsActions.map(a =>
+              <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
+            )
+          }
+        </div>
+      </HeaderComponent>
+>>>>>>> a4b319e9521307a49416128418b193cba318f191
     </div>
   )
 }

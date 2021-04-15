@@ -59,10 +59,12 @@ const View = (Component, options = {}) => {
       if (!value) return { value: null, name };
 
       if (attribute.isArray) {
-        value = value.map((v, i) => <ViewItem key={ i } type={ type } value={ v }/>)
+        value = value.map((v, i) => (
+          <ViewItem key={ `${ item.id }-${ i }` } type={ type } value={ v }/>
+        ))
       }
       else {
-        value = <ViewItem type={ type } value={ value }/>
+        value = <ViewItem key={ item.id } type={ type } value={ value }/>
       }
 
       return { value, name };
@@ -133,7 +135,7 @@ const View = (Component, options = {}) => {
 
       return (
         <div>
-          <Component { ...props } { ...this.props }/>
+          <Component { ...this.props } { ...props }/>
           { !actions.length ? null :
             <div>
               { this.getActionGroups(actions) }
