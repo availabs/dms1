@@ -19,7 +19,7 @@ const defaultGetEmptyValue = () => null;
 const DefaultEditComponent = React.forwardRef(({ Input, children, controls = {}, ...props }, ref) => {
   const {
     addToArray,
-    createNewItem,
+    /*createNewItem,*/
     buttonDisabled,
     cancelEdit
   } = controls;

@@ -7,7 +7,7 @@ const dmsInputWrapper = Component => {
     value = value || {};
 
     const handleChange = React.useCallback((k, v) => {
-      onChange(prev => ({ ...prev, [k]: typeof v === "funvtion" ? v(prev[k]) : v }));
+      onChange(prev => ({ ...prev, [k]: typeof v === "function" ? v(prev[k]) : v }));
     }, [onChange]);
 
     const Sections = useDmsSections(Attribute.Attributes, handleChange);

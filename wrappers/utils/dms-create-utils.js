@@ -3,7 +3,7 @@ import {
   convertToRaw
 } from "../../components/editor"
 
-import { getInput, getInputData } from "./get-dms-input"
+import { getInput, /*getInputData*/ } from "./get-dms-input"
 
 import get from "lodash.get"
 
@@ -13,7 +13,7 @@ import {
   prettyKey,
   checkEditorValue,
   checkDmsValue,
-  verifyDmsValue
+  /*verifyDmsValue*/
 } from "../../utils"
 
 
@@ -290,13 +290,13 @@ export const getAttributes = (format, formats) => {
   return attributes;
 }
 
-const checkDmsDefault = defaults =>
+/*const checkDmsDefault = defaults =>
   Object.keys(defaults).reduce((a, c) => {
     if (typeof defaults[c] === "object") {
       return a && checkDmsDefault(defaults[c]);
     }
     return a && hasValue(defaults[c]);
-  }, true)
+  }, true)*/
 
 class DmsAttribute extends Attribute {
   constructor(att, setValues, props, mode) {
