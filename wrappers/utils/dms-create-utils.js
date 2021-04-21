@@ -553,12 +553,14 @@ export class TypeSelectAttribute extends Attribute {
 
       if (key && !hasValue(value)) {
         const Attribute = this.getAtrribute(key);
-        const saved = Attribute.setValues;
-        Attribute.setValues = (k, v) => {
-          value = v;
+        if (Attribute) {
+          const saved = Attribute.setValues;
+          Attribute.setValues = (k, v) => {
+            value = v;
+          }
+          Attribute.initValue(value);
+          Attribute.setValues = saved;
         }
-        Attribute.initValue(value);
-        Attribute.setValues = saved;
       }
 
       this.value = { key, name, type, value };
@@ -581,11 +583,17 @@ export class TypeSelectAttribute extends Attribute {
       let { key, value, type, name } = initValue || {};
       console.log('init value', key, this.getAtrribute(key))
       const Attribute = this.getAtrribute(key);
-      Attribute.setValues = (k, v) => {
-        value = v;
+
+      if (Attribute) {
+        Attribute.setValues = (k, v) => {
+          value = v;
+        }
+        Attribute.initValue(value);
+        this.onChange({ key, value, type, name }, false);
       }
-      Attribute.initValue(value);
-      this.onChange({ key, value, type, name }, false);
+      else {
+        this.onChange({});
+      }
     }
 
     this.mapOldToNew = oldValue => {
