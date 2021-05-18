@@ -581,7 +581,7 @@ export class TypeSelectAttribute extends Attribute {
 
     this.initValue = initValue => {
       let { key, value, type, name } = initValue || {};
-      console.log('init value', key, this.getAtrribute(key))
+// console.log('init value', key, this.getAtrribute(key))
       const Attribute = this.getAtrribute(key);
 
       if (Attribute) {
