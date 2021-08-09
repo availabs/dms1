@@ -16,7 +16,6 @@ import {
   verifyDmsValue
 } from "../../utils"
 
-
 export const makeStorageId = (format = {}, item = null) =>
   `${ format.app }+${ format.type }${ item ? `:${ item.id }` : `` }`;
 

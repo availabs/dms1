@@ -33,13 +33,6 @@ const InitialState = {
   usingLocalState: false,
   showModal: false
 }
-// const Reducer = (state, action) => {
-//   const { type, ...payload } = action;
-//   switch (action.type) {
-//     default:
-//       return state;
-//   }
-// }
 
 export const useDmsCreateState = (props, mode = "create") => {
 

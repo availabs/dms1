@@ -2,7 +2,7 @@ import React from "react"
 
 import {
   Button,
-  verifyValue as utilityVerify,
+  verifyValue as defaultVerifyValue,
   hasValue as defaultHasValue
 } from "@availabs/avl-components"
 
@@ -99,7 +99,7 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
   DisplayControls = DefaultDisplayControls,
   EditComponent = DefaultEditComponent,
   inputProps, type, verify, showControls,
-  verifyValue = utilityVerify, hasValue = defaultHasValue,
+  verifyValue = defaultVerifyValue, hasValue = defaultHasValue,
   getEmptyValue = defaultGetEmptyValue, ...props }, ref) => {
 
   value = value || [];

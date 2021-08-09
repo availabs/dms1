@@ -12,15 +12,21 @@ import {
 
 import get from "lodash.get"
 
-const GetParams = ({ Component, ...others }) => {
-  const routerParams = useParams(),
-    { search } = useLocation();
-  const searchParams = new URLSearchParams(search),
-    props = [...searchParams.entries()]
+const useSearchParams = () => {
+  const { search } = useLocation();
+  return React.useMemo(() => {
+    const searchParams = new URLSearchParams(search);
+    return [...searchParams.entries()]
       .reduce((a, [k, v]) => {
         a[k] = v;
         return a;
       }, {});
+  }, [search]);
+}
+
+const GetParams = ({ Component, ...others }) => {
+  const routerParams = useParams(),
+    props = useSearchParams();
   return <Component { ...others } routerParams={ { ...routerParams, props } }/>;
 }
 
@@ -28,9 +34,8 @@ const ParseItems = ({ Component, ...props}) => {
   const { action, attribute, value } = useParams();
 
   const id = get(props, "dataItems", []).reduce((a, c) => {
-    const cValue = get(c, ["data", attribute], null)
-      .toString().toLowerCase();
-    return cValue === value.toString().toLowerCase() ? c.id : a;
+    const cValue = get(c, ["data", attribute], null);
+    return String(cValue).toLowerCase() === String(value).toLowerCase() ? c.id : a;
   }, undefined);
 
   if (!id) return <Component key="no-id" { ...props }/>;

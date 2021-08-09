@@ -10,6 +10,8 @@ import { dmsCreate, dmsEdit } from "./dms-create"
 
 import dmsShare from "./dms-share"
 
+import * as DmsNew from "./dms-create-new"
+
 const Wrappers = {
   "dms-falcor": dmsFalcor,
   "dms-view": dmsView,
