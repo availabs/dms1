@@ -3,7 +3,7 @@ import {
   convertToRaw
 } from "../../components/editor"
 
-import { getInput, getInputData } from "./get-dms-input"
+import { getInput, /*getInputData*/ } from "./get-dms-input"
 
 import get from "lodash.get"
 
@@ -13,7 +13,7 @@ import {
   prettyKey,
   checkEditorValue,
   checkDmsValue,
-  verifyDmsValue
+  //verifyDmsValue
 } from "../../utils"
 
 export const makeStorageId = (format = {}, item = null) =>
@@ -289,13 +289,13 @@ export const getAttributes = (format, formats) => {
   return attributes;
 }
 
-const checkDmsDefault = defaults =>
-  Object.keys(defaults).reduce((a, c) => {
-    if (typeof defaults[c] === "object") {
-      return a && checkDmsDefault(defaults[c]);
-    }
-    return a && hasValue(defaults[c]);
-  }, true)
+// const checkDmsDefault = defaults =>
+//   Object.keys(defaults).reduce((a, c) => {
+//     if (typeof defaults[c] === "object") {
+//       return a && checkDmsDefault(defaults[c]);
+//     }
+//     return a && hasValue(defaults[c]);
+//   }, true)
 
 class DmsAttribute extends Attribute {
   constructor(att, setValues, props, mode) {
@@ -552,12 +552,14 @@ export class TypeSelectAttribute extends Attribute {
 
       if (key && !hasValue(value)) {
         const Attribute = this.getAtrribute(key);
-        const saved = Attribute.setValues;
-        Attribute.setValues = (k, v) => {
-          value = v;
+        if (Attribute) {
+          const saved = Attribute.setValues;
+          Attribute.setValues = (k, v) => {
+            value = v;
+          }
+          Attribute.initValue(value);
+          Attribute.setValues = saved;
         }
-        Attribute.initValue(value);
-        Attribute.setValues = saved;
       }
 
       this.value = { key, name, type, value };
@@ -578,12 +580,19 @@ export class TypeSelectAttribute extends Attribute {
 
     this.initValue = initValue => {
       let { key, value, type, name } = initValue || {};
+// console.log('init value', key, this.getAtrribute(key))
       const Attribute = this.getAtrribute(key);
-      Attribute.setValues = (k, v) => {
-        value = v;
+
+      if (Attribute) {
+        Attribute.setValues = (k, v) => {
+          value = v;
+        }
+        Attribute.initValue(value);
+        this.onChange({ key, value, type, name }, false);
       }
-      Attribute.initValue(value);
-      this.onChange({ key, value, type, name }, false);
+      else {
+        this.onChange({});
+      }
     }
 
     this.mapOldToNew = oldValue => {

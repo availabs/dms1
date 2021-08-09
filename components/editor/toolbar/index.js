@@ -17,7 +17,7 @@ const ToolbarPlugin = (options = {}) => {
     const theme = useTheme();
     return (
       <div className={ `absolute ${ position }-0 left-0 w-full p-2 z-10 h-14` }>
-        <div className={ `flex flex-${ direction } shadow-md h-10 p-1 rounded ${ theme.menuBg } w-full` }>
+        <div className={ `flex flex-${ direction } shadow-md h-10 p-1 rounded ${ theme.menuBg } ${ theme.scrollBar } w-full` }>
           { children }
         </div>
       </div>

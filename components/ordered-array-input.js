@@ -1,5 +1,7 @@
 import React from "react"
 
+//import debounce from "lodash.debounce"
+
 import {
   Button,
   verifyValue as defaultVerifyValue,
@@ -19,7 +21,7 @@ const defaultGetEmptyValue = () => null;
 const DefaultEditComponent = React.forwardRef(({ Input, children, controls = {}, ...props }, ref) => {
   const {
     addToArray,
-    createNewItem,
+    /*createNewItem,*/
     buttonDisabled,
     cancelEdit
   } = controls;
@@ -227,7 +229,7 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
               canMoveDown={ i < (value.length - 1) }
               value={ v }>
 
-              <DisplayComp value={ v } />
+              <MemoizedDisplayComp value={ v } DisplayComp={ DisplayComp }/>
 
             </DisplayControls>
           )
@@ -237,3 +239,9 @@ const OrderedArrayInput = React.forwardRef(({ Input, onChange, value, disabled, 
   )
 })
 export default OrderedArrayInput;
+
+const MemoizedDisplayComp = React.memo(({ value, DisplayComp }) => {
+  return (
+    <DisplayComp value={ value }/>
+  )
+})

@@ -1,6 +1,6 @@
 import React from "react"
 
-import get from "lodash.get"
+/*import get from "lodash.get"*/
 
 import { hasValue, verifyValue } from "@availabs/avl-components"
 
@@ -10,7 +10,7 @@ import { useDms } from "../../contexts/dms-context"
 
 import {
   TypeSelectAttribute,
-  makeNewAttribute as makeNewDmsAttribute
+  /*makeNewAttribute as makeNewDmsAttribute*/
 } from "../../wrappers/utils/dms-create-utils"
 import { getInput } from "../../wrappers/utils/get-dms-input"
 
@@ -131,7 +131,7 @@ export const useDmsSectionsOld = (sections, onChange, props, mode) => {
       })
       setSections(Sections);
     }
-  }, [sections, Sections.length, registeredFormats, setValues, props]);
+  }, [sections, Sections.length, registeredFormats, setValues, props, mode]);
 
   return React.useMemo(() => {
     Sections.forEach(section => {
