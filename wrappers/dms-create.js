@@ -309,6 +309,7 @@ export const dmsEdit = Component => {
 
     const { item, interact } = props;
     const [data, setData] = useState({});
+    const doingLive = React.useRef(false);
 
     const DmsCreateState = useDmsCreateState(props, "edit"),
       updated = hasBeenUpdated(data, DmsCreateState) && DmsCreateState.initialized;
@@ -330,7 +331,9 @@ export const dmsEdit = Component => {
     const debounced = React.useMemo(() => {
       return debounce((disabled, itemId, saveValues) => {
         if (!disabled) {
+          doingLive.current = true;
           interact("api:edit", itemId, saveValues, { loading: false })
+            .then(() => doingLive.current = false);
           //   .then(() => {
           //     DmsCreateState.onSave();
           //     DmsCreateState.clearValues();
@@ -376,7 +379,7 @@ export const dmsEdit = Component => {
       }
     }
 
-    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, DmsCreateState.hasValues && DmsCreateState.hasBeenUpdated, Boolean(item), item);
+    const [show, onHide, loadData] = useLocalStorage(DmsCreateState, !doingLive.current && DmsCreateState.hasValues && DmsCreateState.hasBeenUpdated, Boolean(item), item);
 
     return (
       <>
