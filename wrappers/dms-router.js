@@ -47,9 +47,9 @@ const ParseItems = ({ Component, ...props}) => {
 const dmsRouter = (Component, options = {}) =>
   props => {
     const { path } = useRouteMatch(),
-      alt11 = `${ path }/:action`,
-      alt13 = `${ path }/:action/:id`,
-      alt21 = `${ path }/:action/:attribute/:value`;
+      alt11 = `/:action`,
+      alt13 = `/:action/:id`,
+      alt21 = `/:action/:attribute/:value`;
 
     const location = useLocation(),
       history = useHistory();

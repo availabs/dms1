@@ -55,7 +55,7 @@ export const getItem = (id, props) => {
 }
 
 const makePath = (basePath, action, itemId = null, props = null) =>
-  `${ basePath }/${ action }${ itemId ? `/${ itemId }` : "" }`
+  `${ action }${ itemId ? `/${ itemId }` : "" }`
 
 const normalizeArgs = (dmsAction, item, props) => {
   let itemId = null;
