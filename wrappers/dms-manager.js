@@ -22,7 +22,9 @@ const dmsManager = Component =>
           ));
         }
         else if (!child.props.dmsAction) {
-          children.push(child);
+            dmsActions.push(...get(child, ["props", "dmsActions"], []));
+
+            children.push(child);
         }
         return children;
       }, [])

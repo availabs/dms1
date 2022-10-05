@@ -40,7 +40,7 @@ const ParseItems = ({ Component, ...props}) => {
 
   if (!id) return <Component key="no-id" { ...props }/>;
 
-  return <Redirect to={ `${ props.basePath }/${ action }/${ id }` }/>
+  return <Redirect to={ `/${ action }/${ id }` }/>
   // return <Component { ...props } routerParams={ { action, id } }/>
 }
 

@@ -148,6 +148,19 @@ export const makeInteraction = (...args) => {
               )
           }
         }
+                : /^(page:)\w*$/.test(action) ?
+                    { type: "link",
+                      key: action,
+                      action,
+                      ...rest,
+                      to: {
+                        pathname: basePath + action,
+                        state: {
+                          stack: [...stack, basePath + action],
+                          search: searchStack
+                        }
+                      }
+                    }
       : { type: "link",
           key: action,
           action,
@@ -241,6 +254,19 @@ export const makeOnClick = (...args) => {
                 search: searchStack.slice(0, -1)
               }
             }))
+        })
+                : /^page:\w*/.test(action) ?
+        (e => {
+          e.stopPropagation();
+          e.preventDefault();
+          push({
+            pathname: basePath + action,
+            search: !propsToSeed ? "" : `?${ Object.keys(propsToSeed).map(k => `${ k }=${ propsToSeed[k] }`).join('&') }`,
+            state: {
+              stack: [pathname],
+              search: [search]
+            }
+          });
         })
       : (e => {
           e.stopPropagation();
