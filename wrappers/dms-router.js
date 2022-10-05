@@ -70,6 +70,11 @@ const dmsRouter = (Component, options = {}) =>
           <Route exact path={ [alt11, alt13] }>
             <GetParams { ...props } { ...routerProps } Component={ Component }/>
           </Route>
+          {/*{actions.map(act => 
+            <Route exact path={ [`${path}/${action}`, `${path}/${action}/:id`] }>
+              <GetParams { ...props } { ...routerProps } Component={ Component }/>
+            </Route>
+          }*/}
           <Route exact path={ alt21 }>
             <ParseItems { ...props } { ...routerProps } Component={ Component }/>
           </Route>

@@ -45,22 +45,30 @@ const DmsHeader = ({ title, shadowed = true, showHome = true, dmsActions = [], n
         ${ theme.menuBg }
       ` }>
       <div>
-        <HeaderComponent title={
-          <Title>{ title || `${ props.app } Manager` }</Title>
-        }>
-          <div className="flex items-center">
-            { !pageMessages.length ? null :
-              <Warning warnings={ pageMessages }/>
-            }
-            { !attributeMessages.length ? null :
-              <Warning warnings={ attributeMessages } type="att"/>
-            }
-            { dmsActions.map(a =>
-                <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
-              )
-            }
+        
+          <div className="flex items-center justify-between w-full bg-gray-100 border-b border-gray-200">
+            <div className='text-lg p-2'>
+            {title}
+            </div>
+            <div className='px-4 flex items-center'> 
+              <div>
+                { !pageMessages.length ? null :
+                  <Warning warnings={ pageMessages }/>
+                }
+                { !attributeMessages.length ? null :
+                  <Warning warnings={ attributeMessages } type="att"/>
+                }
+                { dmsActions.map(a =>
+                    <DmsButton className="ml-1" key={ a.action || a } action={ a } item={ item }/>
+                  )
+                }
+              </div>
+              <div>
+                {props.children}
+              </div>
+            </div>
           </div>
-        </HeaderComponent>
+        
       </div>
     </div>
   )
