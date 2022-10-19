@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme } from "@availabs/avl-components"
+import { useTheme } from "modules/avl-components/src"
 
 const EditorButton = ({ active, disabled, children, ...props }) => {
   const theme = useTheme();

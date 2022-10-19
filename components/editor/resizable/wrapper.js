@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useSetRefs } from "@availabs/avl-components"
+import { useSetRefs } from "modules/avl-components/src"
 
 import throttle from "lodash.throttle"
 

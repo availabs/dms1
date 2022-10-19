@@ -4,7 +4,7 @@ import deepequal from "deep-equal"
 import get from "lodash.get"
 import debounce from "lodash.debounce"
 
-import { hasValue, useTheme, AvlModal } from "@availabs/avl-components"
+import { hasValue, useTheme, AvlModal } from "modules/avl-components/src"
 import { DmsCreateStateClass, makeNewAttribute, makeStorageId } from "./utils/dms-create-utils"
 // import { getValue } from "../utils"
 

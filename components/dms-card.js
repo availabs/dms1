@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme } from "@availabs/avl-components"
+import { useTheme } from "modules/avl-components/src"
 
 const DmsCard = ({ title, body, footer, children }) => {
   const theme = useTheme();

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 import { useAuth } from "../contexts/auth-context"
 import { useDms } from "../contexts/dms-context"
 import { mapDataToProps as doMapDataToProps, getValue } from "../utils"
-import { hasValue } from "@availabs/avl-components"
+import { hasValue } from "modules/avl-components/src"
 
 // import get from "lodash.get"
 

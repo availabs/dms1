@@ -2,7 +2,7 @@ import React from "react"
 
 /*import get from "lodash.get"*/
 
-import { hasValue, verifyValue } from "@availabs/avl-components"
+import { hasValue, verifyValue } from "modules/avl-components/src"
 
 import { isRequired, getAttributes } from "../../wrappers/utils/dms-create-utils"
 

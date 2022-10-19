@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Button, Select, useTheme } from "@availabs/avl-components"
+import { Button, Select, useTheme } from "modules/avl-components/src"
 
 import { DmsButton } from "./dms-button"
 

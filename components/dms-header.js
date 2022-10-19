@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme, HeaderComponent } from "@availabs/avl-components"
+import { useTheme, HeaderComponent } from "modules/avl-components/src"
 import { useDms } from "../contexts/dms-context"
 
 import { DmsButton } from "./dms-button"

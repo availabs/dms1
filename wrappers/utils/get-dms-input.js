@@ -10,7 +10,7 @@ import {
   MarkdownViewer,
   ColorInput,
   hasValue
-} from "@availabs/avl-components"
+} from "modules/avl-components/src"
 
 import Editor, { createEmpty } from "../../components/editor"
 import ReadOnlyEditor from "../../components/editor/editor.read-only"

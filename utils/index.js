@@ -4,7 +4,7 @@ import get from "lodash.get"
 import * as d3format from "d3-format"
 import * as d3timeFormat from "d3-time-format"
 
-import { hasValue, verifyValue } from "@availabs/avl-components"
+import { hasValue, verifyValue } from "modules/avl-components/src"
 
 export const checkEditorValue = value => {
   return Boolean(value) && value.getCurrentContent().hasText()

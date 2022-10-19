@@ -25,9 +25,13 @@ const useSearchParams = () => {
 }
 
 const GetParams = ({ Component, ...others }) => {
-  const routerParams = useParams(),
+    const { path } = useRouteMatch()
+    const routerParams = useParams(),
     props = useSearchParams();
-  return <Component { ...others } routerParams={ { ...routerParams, props } }/>;
+    const action = path.replace(others.basePath, '').split('/').filter(f => f.length)
+
+    return path.includes('/auth/login') ? <Component { ...others } routerParams={ { ...routerParams, props } }/> :
+        <Component { ...others } routerParams={ { ...routerParams, props, ...{action: action[0]} } }/>;
 }
 
 const ParseItems = ({ Component, ...props}) => {
@@ -40,16 +44,17 @@ const ParseItems = ({ Component, ...props}) => {
 
   if (!id) return <Component key="no-id" { ...props }/>;
 
-  return <Redirect to={ `/${ action }/${ id }` }/>
+  return <Redirect to={ `${ props.basePath }${ action }/${ id }` }/>
   // return <Component { ...props } routerParams={ { action, id } }/>
 }
 
 const dmsRouter = (Component, options = {}) =>
   props => {
     const { path } = useRouteMatch(),
-      alt11 = `/:action`,
-      alt13 = `/:action/:id`,
-      alt21 = `/:action/:attribute/:value`;
+      alt11 = `${ path }/:action`,
+      alt13 = `${ path }/:action/:id`,
+      alt21 = `${ path }/:action/:attribute/:value`;
+    const hardCodedPath = path === '/' ? `` : path
 
     const location = useLocation(),
       history = useHistory();
@@ -67,10 +72,15 @@ const dmsRouter = (Component, options = {}) =>
           <Route exact path={ path }>
             <Component { ...props } { ...routerProps }/>
           </Route>
-          <Route exact path={ [alt11, alt13] }>
+          <Route exact  path={ [
+              `${hardCodedPath}/landing`,
+              `${hardCodedPath}/auth/login`,
+              `${hardCodedPath}/dms:create`,
+              `${hardCodedPath}/dms:edit/:id`
+                              ] }>
             <GetParams { ...props } { ...routerProps } Component={ Component }/>
           </Route>
-          {/*{actions.map(act => 
+          {/*{actions.map(act =>
             <Route exact path={ [`${path}/${action}`, `${path}/${action}/:id`] }>
               <GetParams { ...props } { ...routerProps } Component={ Component }/>
             </Route>

@@ -6,7 +6,7 @@ import {
   imgLoader,
   showLoading,
   useBrush
-} from "@availabs/avl-components"
+} from "modules/avl-components/src"
 
 import get from "lodash.get"
 

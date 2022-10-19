@@ -1,6 +1,6 @@
 import React from "react"
 
-import { avlFalcor } from "@availabs/avl-components"
+import { avlFalcor } from "modules/avl-components/src"
 
 import get from "lodash.get"
 

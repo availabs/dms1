@@ -7,7 +7,7 @@ import { getInput, /*getInputData*/ } from "./get-dms-input"
 
 import get from "lodash.get"
 
-import { verifyValue, hasValue } from "@availabs/avl-components"
+import { verifyValue, hasValue } from "modules/avl-components/src"
 import {
   getValue,
   prettyKey,

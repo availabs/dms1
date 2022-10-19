@@ -2,7 +2,7 @@ import React from "react"
 
 // import { useDms } from "../contexts/dms-context"
 // import { useAuth } from "../contexts/auth-context"
-import { useTheme } from "@availabs/avl-components"
+import { useTheme } from "modules/avl-components/src"
 
 // import { useSetSections } from "../wrappers/dms-create"
 

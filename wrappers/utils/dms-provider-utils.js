@@ -55,7 +55,9 @@ export const getItem = (id, props) => {
 }
 
 const makePath = (basePath, action, itemId = null, props = null) =>
-  `${ action }${ itemId ? `/${ itemId }` : "" }`
+    basePath === '/' ?
+  `${ action }${ itemId ? `/${ itemId }` : "" }` :
+  `${ basePath }/${ action }${ itemId ? `/${ itemId }` : "" }`
 
 const normalizeArgs = (dmsAction, item, props) => {
   let itemId = null;
@@ -84,7 +86,7 @@ export const makeInteraction = (...args) => {
     props,
     interact
   ] = normalizeArgs(...args);
-
+  console.log('action', action)
   const { authRules, useRouter, basePath, location, history } = props,
 
     hasAuth = checkAuth(authRules, action, props, item),

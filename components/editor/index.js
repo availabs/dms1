@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useTheme, imgLoader, showLoading } from "@availabs/avl-components"
+import { useTheme, imgLoader, showLoading } from "modules/avl-components/src"
 
 import {
   EditorState,

@@ -7,7 +7,7 @@ import {
 
 import { getInput, getInputData } from "./get-dms-input"
 
-import { verifyValue, hasValue } from "@availabs/avl-components"
+import { verifyValue, hasValue } from "modules/avl-components/src"
 import {
   getValue,
   prettyKey,

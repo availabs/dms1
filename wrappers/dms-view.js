@@ -3,7 +3,7 @@ import React from "react"
 import { DmsButton } from "../components/dms-button"
 import ReadOnlyEditor from "../components/editor/editor.read-only"
 
-import { MarkdownViewer } from "@availabs/avl-components"
+import { MarkdownViewer } from "modules/avl-components/src"
 
 import get from "lodash.get"
 

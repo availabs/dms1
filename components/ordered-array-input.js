@@ -6,7 +6,7 @@ import {
   Button,
   verifyValue as defaultVerifyValue,
   hasValue as defaultHasValue
-} from "@availabs/avl-components"
+} from "modules/avl-components/src"
 
 const DefaultDisplay = ({ value }) => {
   switch (typeof value) {

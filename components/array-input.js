@@ -4,7 +4,7 @@ import {
   Button, ValueContainer, ValueItem,
   verifyValue as utilityVerify, hasValue as defaultHasValue,
   useSetRefs
-} from "@availabs/avl-components"
+} from "modules/avl-components/src"
 
 const DefaultDisplay = ({ value }) => {
   switch (typeof value) {

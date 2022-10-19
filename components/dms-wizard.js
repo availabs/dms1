@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Button, useTheme } from "@availabs/avl-components"
+import { Button, useTheme } from "modules/avl-components/src"
 
 const DmsWizard = ({ sections, activeIndex, canGoPrev, prev, canGoNext, next, children, ...props }) => {
   const theme = useTheme();
