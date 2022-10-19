@@ -30,7 +30,7 @@ const GetParams = ({ Component, ...others }) => {
     props = useSearchParams();
     const action = path.replace(others.basePath, '').split('/').filter(f => f.length)
 
-    return path.includes('/auth/login') ? <Component { ...others } routerParams={ { ...routerParams, props } }/> :
+    return ['/auth/login', '/auth/logout'].includes(path) ? <Component { ...others } routerParams={ { ...routerParams, props } }/> :
         <Component { ...others } routerParams={ { ...routerParams, props, ...{action: action[0]} } }/>;
 }
 
@@ -75,6 +75,7 @@ const dmsRouter = (Component, options = {}) =>
           <Route exact  path={ [
               `${hardCodedPath}/landing`,
               `${hardCodedPath}/auth/login`,
+              // `${hardCodedPath}/auth/logout`,
               `${hardCodedPath}/dms:create`,
               `${hardCodedPath}/dms:edit/:id`
                               ] }>
